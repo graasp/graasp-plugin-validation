@@ -1,10 +1,10 @@
 const validation = {
   params: {
     itemId: {
-      type: 'UUID'
+      $ref: 'http://graasp.org/#/definitions/uuid',
     },
   },
-  required: 'itemId',
+  required: ['itemId'],
   additionalProperties: false,
 };
 

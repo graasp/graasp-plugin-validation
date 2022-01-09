@@ -1,5 +1,5 @@
 // global
-import { DatabaseTransactionHandler, ItemService, Member } from 'graasp';
+import { DatabaseTransactionHandler, Member } from 'graasp';
 import BadWordsFilter from 'bad-words';
 import { stripHtml } from '../utils';
 // local
@@ -10,7 +10,6 @@ type InputType = { itemId: string };
 
 export class ScreenBadWordsTask extends BaseValidationTask<boolean> {
   input: InputType;
-  itemService: ItemService;
 
   get name(): string {
     return ScreenBadWordsTask.name;
@@ -19,7 +18,6 @@ export class ScreenBadWordsTask extends BaseValidationTask<boolean> {
   constructor(member: Member, validationService: ValidationService, input: InputType) {
     super(member, validationService);
     this.input = input;
-    this.itemService = new ItemService();
   }
 
   checkBadWrods = (documents: string[]) => {
@@ -37,7 +35,7 @@ export class ScreenBadWordsTask extends BaseValidationTask<boolean> {
     this.status = 'RUNNING';
 
     const { itemId } = this.input;
-    const item = await this.itemService.get(itemId, handler);
+    const item = await this.validationService.getItem(itemId, handler);
     const suspicious = this.checkBadWrods([item.name, item.description]);
     if (suspicious) {
       this.status = 'FAIL';
