@@ -20,9 +20,9 @@
   "repository": "git@github.com:graasp/graasp-plugin-validation.git",
   "license": "AGPL",
   "bugs": {
-    "url": "https://github.com/graasp/graasp-repo/issues"
+    "url": "https://github.com/graasp/graasp-plugin-validation/issues"
   },
-  "homepage": "https://github.com/graasp/graasp-repo#readme",
+  "homepage": "https://github.com/graasp/graasp-plugin-validation#readme",
   "devDependencies": {
     "@types/bad-words": "3.0.1",
     "@types/eslint": "^7.2.5",

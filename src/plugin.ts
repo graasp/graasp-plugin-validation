@@ -8,7 +8,8 @@ import { validation } from './schemas';
 
 const plugin: FastifyPluginAsync = async (fastify) => {
   const {
-    taskRunner: runner
+    taskRunner: runner,
+    items: {dbService: iS},
   } = fastify;
   const validationService = new ValidationService();
   const taskManager = new TaskManager(validationService);
@@ -18,7 +19,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     '/validation/:itemId',
     { schema: validation },
     async ({ member, params: { itemId }, log }) => {
-      const task = taskManager.createScreenBadWordsTask(member, itemId);
+      const task = taskManager.createScreenBadWordsTask(member, iS, itemId);
       return runner.runSingle(task, log);
     },
   );

@@ -1,5 +1,5 @@
 // global
-import { DatabaseTransactionHandler, Member } from 'graasp';
+import { DatabaseTransactionHandler, ItemService, Member } from 'graasp';
 import BadWordsFilter from 'bad-words';
 import { stripHtml } from '../utils';
 // local
@@ -10,18 +10,20 @@ type InputType = { itemId: string };
 
 export class ScreenBadWordsTask extends BaseValidationTask<boolean> {
   input: InputType;
+  itemService: ItemService;
 
   get name(): string {
     return ScreenBadWordsTask.name;
   }
 
-  constructor(member: Member, validationService: ValidationService, input: InputType) {
+  constructor(member: Member, validationService: ValidationService, itemService: ItemService, input: InputType) {
     super(member, validationService);
+    this.itemService = itemService;
     this.input = input;
   }
 
   checkBadWrods = (documents: string[]) => {
-    const strings = documents?.filter(Boolean).map((entry) => stripHtml(entry));
+    const strings = documents?.filter(Boolean);
     const badWordsFilter = new BadWordsFilter();
     for (const index in strings) {
       if (badWordsFilter.isProfane(strings[index])) {
@@ -35,8 +37,8 @@ export class ScreenBadWordsTask extends BaseValidationTask<boolean> {
     this.status = 'RUNNING';
 
     const { itemId } = this.input;
-    const item = await this.validationService.getItem(itemId, handler);
-    const suspicious = this.checkBadWrods([item.name, item.description]);
+    const item = await this.itemService.get(itemId, handler);
+    const suspicious = this.checkBadWrods([item.name, stripHtml(item.description)]);
     if (suspicious) {
       this.status = 'FAIL';
       this._result = true;
