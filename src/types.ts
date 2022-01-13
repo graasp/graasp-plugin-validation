@@ -1,2 +1,4 @@
-// No extra types currently needed
-// Placeholder for future use
+export type contentForValidation = {
+  name: string,
+  value: string
+}

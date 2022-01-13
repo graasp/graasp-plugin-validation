@@ -1,7 +1,7 @@
 import { ItemService, Member } from 'graasp';
 import { ValidationService } from './db-service';
 import { ValidationTaskManager } from './interface/validation-task-manager';
-import { ScreenBadWordsTask } from './task/screen-bad-words-task';
+import { DetectBadWordsTask } from  './task/detect-bad-words-task';
 
 export class TaskManager implements ValidationTaskManager {
   private validationService: ValidationService;
@@ -10,9 +10,9 @@ export class TaskManager implements ValidationTaskManager {
     this.validationService = validationService;
   }
 
-  getScreenBadWordsTaskName(): string { return ScreenBadWordsTask.name; }
+  getScreenBadWordsTaskName(): string { return DetectBadWordsTask.name; }
 
-  createScreenBadWordsTask(member: Member, itemService: ItemService, itemId: string): ScreenBadWordsTask {
-    return new ScreenBadWordsTask(member, this.validationService, itemService, {itemId});
+  createScreenBadWordsTask(member: Member, itemService: ItemService, itemId: string): DetectBadWordsTask {
+    return new DetectBadWordsTask(member, this.validationService, itemService, {itemId});
   }
 }
