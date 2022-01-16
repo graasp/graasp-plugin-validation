@@ -1021,6 +1021,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"french-badwords-list@npm:1.0.5":
+  version: 1.0.5
+  resolution: "french-badwords-list@npm:1.0.5"
+  checksum: da562384d5e9b7d3e9b42de2e620c96093d5359d85784faa9a64cbae07df29a9498dbd976c45c2f535e67837d2b37464d0af7b7399359cea35b48f8ea4f7853a
+  languageName: node
+  linkType: hard
+
 "fs.realpath@npm:^1.0.0":
   version: 1.0.0
   resolution: "fs.realpath@npm:1.0.0"
@@ -1113,6 +1120,7 @@ __metadata:
     bad-words: 3.0.4
     eslint: ^7.13.0
     fastify: ^3.8.0
+    french-badwords-list: 1.0.5
     slonik: ^23.0.2
     typescript: ^4.0.5
   languageName: unknown
