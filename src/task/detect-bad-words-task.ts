@@ -41,11 +41,16 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
     this.status = 'RUNNING';
 
     const { itemId } = this.input;
+    const processId = await this.validationService.getProcessId('bad words detection', handler);
+    // Add record of this validation process
+    const itemValidationEntry = await this.validationService.createAutomaticValidationRecord(itemId, processId, handler);
     const item = await this.itemService.get(itemId, handler);
     const suspiciousFields = this.checkBadWrods([
       {name: 'name', value: item.name}, 
       {name: 'description', value: stripHtml(item.description)}
     ]);
+    
+    this.validationService.updateAutomaticValidationRecord(itemValidationEntry, handler);
     if (suspiciousFields.length > 0) {
       this.status = 'FAIL';
       this._result = suspiciousFields;
