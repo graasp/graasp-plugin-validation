@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS item_validation (
 CREATE TABLE IF NOT EXISTS item_validation_review (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   validation_id UUID NOT NULL,
-  reviewer_id UUID NOT NULL,
+  reviewer_id UUID,
   status VARCHAR(20) NOT NULL DEFAULT 'pending',
   reason VARCHAR(100),
   update_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),

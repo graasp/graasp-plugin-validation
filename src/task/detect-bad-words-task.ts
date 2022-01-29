@@ -4,7 +4,7 @@ import BadWordsFilter from 'bad-words';
 // local
 import { ValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
-import { contentForValidation } from '../types';
+import { contentForValidation, ItemValidation } from '../types';
 import { buildValidationFailMessage, VALIDATION_SUCCESS_MESSAGE } from '../constants';
 import { buildWordList, stripHtml } from '../utils';
 
@@ -42,23 +42,30 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
 
     const { itemId } = this.input;
     const processId = await this.validationService.getProcessId('bad words detection', handler);
+
     // Add record of this validation process
     const itemValidationEntry = await this.validationService.createAutomaticValidationRecord(itemId, processId, handler);
+    
     const item = await this.itemService.get(itemId, handler);
     const suspiciousFields = this.checkBadWrods([
       {name: 'name', value: item.name}, 
       {name: 'description', value: stripHtml(item.description)}
     ]);
+
+    // Update record after the process finishes
+    const updatedItemValidationEntry = suspiciousFields.length > 0 ? 
+      {...itemValidationEntry, status: 'fail', result: suspiciousFields} :
+      {...itemValidationEntry, status: 'success'};
     
-    this.validationService.updateAutomaticValidationRecord(itemValidationEntry, handler);
+    await this.validationService.updateAutomaticValidationRecord(updatedItemValidationEntry as ItemValidation, handler);
     if (suspiciousFields.length > 0) {
       this.status = 'FAIL';
       this._result = suspiciousFields;
       this._message = buildValidationFailMessage(suspiciousFields);
+      this.validationService.createManualReviewRecord(updatedItemValidationEntry.id, handler);
     }
     else {
       this.status = 'OK';
-      this._result = suspiciousFields;
       this._message = VALIDATION_SUCCESS_MESSAGE;
     }
   }
