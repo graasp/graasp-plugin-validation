@@ -23,6 +23,11 @@ export type ItemValidationReview = {
   createAt: string,
 }
 
+export type ItemValidationProcess = {
+  id: string,
+  name: string,
+}
+
 export type FullValidationRecord = {
   id: string,
   itemId: string,

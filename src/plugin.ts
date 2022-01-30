@@ -17,7 +17,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
   // get all entries need manual review
   fastify.get(
-    '/validation/review',
+    '/validation-review',
     async ({ member, log }) => {
       const task = taskManager.createGetManualReviewTask(member);
       return runner.runSingle(task, log);
@@ -44,9 +44,9 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // validate item with given itemId in param
+  // update manual review record of given entry
   fastify.post<{ Params: { id: string }; }>(
-    '/validation/:id',
+    '/validation-review/:id',
     { schema: validationReview },
     async ({ member, params: { id }, body: data, log }) => {
       const task = taskManager.createUpdateManualReviewTask(member, id, data as Partial<ItemValidationReview>);

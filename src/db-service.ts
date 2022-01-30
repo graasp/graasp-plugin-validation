@@ -1,5 +1,5 @@
 import { sql, DatabaseTransactionConnection as TrxHandler } from 'slonik';
-import { FullValidationRecord, ItemValidation, ItemValidationReview, ItemValidationStatus } from './types';
+import { FullValidationRecord, ItemValidation, ItemValidationProcess, ItemValidationReview, ItemValidationStatus } from './types';
 /**
  * Database's first layer of abstraction for content validation
  */
@@ -24,8 +24,8 @@ export class ValidationService{
   private static columnsForStatus = sql.join(
     [
       [['iv', 'status'], ['automaticStatus']],
-      [['ivr', 'status'], ['manualStatus']],
       [['iv', 'result'], ['automaticResult']],
+      [['ivr', 'status'], ['manualStatus']],
       [['ivr', 'reason'], ['manualResult']],
     ].map((c) =>
       sql.join(
@@ -40,11 +40,11 @@ export class ValidationService{
    * Get Id of given validation process name
    * @param name Process's name
    */
-  async getProcessId(name: string, transactionHandler: TrxHandler): Promise<string> {
+  async getProcessId(name: string, transactionHandler: TrxHandler): Promise<ItemValidationProcess> {
     return transactionHandler
-      .query<string>(
+      .query<ItemValidationProcess>(
         sql`
-        SELECT id 
+        SELECT * 
         FROM item_validation_process
         WHERE name = ${name}
       `,
@@ -104,6 +104,7 @@ export class ValidationService{
           VALUES (
             ${itemId}, ${processId}
           )
+          RETURNING *
         `,
         )
         .then(({ rows }) => rows[0]);
@@ -121,6 +122,7 @@ export class ValidationService{
         VALUES (
           ${validationId}
         )
+        RETURNING *
       `,
       )
       .then(({ rows }) => rows[0]);
@@ -153,12 +155,13 @@ export class ValidationService{
     return transactionHandler
       .query<ItemValidationReview>(
         sql`
-        UPDATE item_validation _review
+        UPDATE item_validation_review
         SET status = ${status},
             reason = ${reason},
-            reviewer = ${reviewerId},
+            reviewer_id = ${reviewerId},
             update_at = CURRENT_TIMESTAMP
         WHERE id = ${id}
+        RETURNING *
       `,
       )
       .then(({ rows }) => rows[0]);

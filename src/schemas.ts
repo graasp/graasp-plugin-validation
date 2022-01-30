@@ -1,19 +1,4 @@
-export default {
-  $id: 'http://graasp.org/items/validation',
-  definitions: {
-    // item properties to be returned to the client
-    itemValidationReview: {
-      type: 'object',
-      properties: {
-        status: { type: 'string' },
-        reason: { type: ['string', 'null'] },
-      },
-      additionalProperties: false,
-    },
-  }
-};
-
-const validation = {
+export const validation = {
   params: {
     itemId: {
       $ref: 'http://graasp.org/#/definitions/uuid',
@@ -23,17 +8,20 @@ const validation = {
   additionalProperties: false,
 };
 
-const validationReview = {
+export const validationReview = {
   params: {
     id: {
       $ref: 'http://graasp.org/#/definitions/uuid',
     },
   },
   body: {
-    $ref: 'http://graasp.org/items/validation#/definitions/itemValidationReview',
+    status: {
+      type: 'string',
+    },
+    reason: {
+      type: 'string',
+    }
   },
   required: ['id'],
   additionalProperties: false,
 };
-
-export { validation, validationReview };

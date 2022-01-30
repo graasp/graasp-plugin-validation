@@ -32,7 +32,7 @@
     "@typescript-eslint/parser": "^4.7.0",
     "bad-words": "3.0.4",
     "eslint": "^7.13.0",
-    "fastify": "^3.8.0",
+    "fastify": "^3.25.3",
     "slonik": "^27.1.0",
     "typescript": "^4.0.5"
   },
