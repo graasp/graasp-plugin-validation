@@ -8,6 +8,15 @@ export enum Status {
   Reject = 'reject',
   Success = 'success',
   Fail = 'fail',
+  Pending = 'pending',
 }
 
+export const ValidationProcesses = {
+  BadWordsDetection: {
+    name: 'bad-words-detection',
+  },
+  AggressiveAndHateSpeech: {
+    name: 'aggressive-or-hate-speech-detection',
+  },
+};
   

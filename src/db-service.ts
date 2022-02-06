@@ -1,4 +1,5 @@
 import { sql, DatabaseTransactionConnection as TrxHandler } from 'slonik';
+import { Status } from './constants';
 import { FullValidationRecord, ItemValidation, ItemValidationProcess, ItemValidationReview, ItemValidationStatus } from './types';
 /**
  * Database's first layer of abstraction for content validation
@@ -11,7 +12,7 @@ export class ValidationService{
       [['iv', 'item_id'], ['itemId']],
       [['iv', 'result'], ['result']],
       [['ivp', 'name'], ['process']],
-      [['ivr', 'create_at'], ['createAt']],
+      [['ivr', 'created_at'], ['createdAt']],
     ].map((c) =>
       sql.join(
         c.map((cwa) => sql.identifier(cwa)),
@@ -74,7 +75,7 @@ export class ValidationService{
   /**
    * Get all entries need manual review, ordered by created time (oldest first)
    */
-   async getManualReviewEntries(transactionHandler: TrxHandler): Promise<FullValidationRecord[]> {
+   async getValidationReviewPendingEntries(transactionHandler: TrxHandler): Promise<FullValidationRecord[]> {
     return transactionHandler
       .query<FullValidationRecord>(
         sql`
@@ -84,7 +85,7 @@ export class ValidationService{
         ON ivr.validation_id = iv.id
         INNER JOIN item_validation_process AS ivp
         ON iv.process_id = ivp.id
-        WHERE ivr.status = 'pending'
+        WHERE ivr.status = ${Status.Pending}
         ORDER BY ivr.create_at ASC
       `,
       )
@@ -96,7 +97,7 @@ export class ValidationService{
    * @param itemId id of the item being validated
    * @param processId id of the validation process
    */
-    async createAutomaticValidationRecord(itemId: string, processId: string, transactionHandler: TrxHandler): Promise<ItemValidation> {
+    async createItemValidation(itemId: string, processId: string, transactionHandler: TrxHandler): Promise<ItemValidation> {
       return transactionHandler
         .query<ItemValidation>(
           sql`
@@ -114,7 +115,7 @@ export class ValidationService{
    * Create an entry for manual review in DB
    * @param validationId id of the validation record needs manual review
    */
-   async createManualReviewRecord(validationId: string, transactionHandler: TrxHandler): Promise<ItemValidationReview> {
+   async createItemValidationReview(validationId: string, transactionHandler: TrxHandler): Promise<ItemValidationReview> {
     return transactionHandler
       .query<ItemValidationReview>(
         sql`
@@ -132,7 +133,7 @@ export class ValidationService{
    * Update an entry for the automatic validation process in DB
    * @param itemValidationEntry entry with updated data
    */
-   async updateAutomaticValidationRecord(itemValidationEntry: ItemValidation, transactionHandler: TrxHandler): Promise<ItemValidation> {
+   async updateItemValidation(itemValidationEntry: ItemValidation, transactionHandler: TrxHandler): Promise<ItemValidation> {
     const { id, status: processStatus, result } = itemValidationEntry;
     return transactionHandler
       .query<ItemValidation>(
@@ -151,7 +152,7 @@ export class ValidationService{
    * Update an entry for the manual validation process in DB
    * @param itemValidationReviewEntry entry with updated data
    */
-   async updateManualValidationRecord(id: string, status: string = 'pending', reason: string = '', reviewerId: string, transactionHandler: TrxHandler): Promise<ItemValidationReview> {
+   async updateItemValidationReview(id: string, status: string = Status.Pending, reason: string = '', reviewerId: string, transactionHandler: TrxHandler): Promise<ItemValidationReview> {
     return transactionHandler
       .query<ItemValidationReview>(
         sql`

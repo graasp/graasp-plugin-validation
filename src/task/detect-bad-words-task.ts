@@ -24,7 +24,7 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
     this.input = input;
   }
 
-  checkBadWrods = (documents: contentForValidation[]) => {
+  checkBadWords = (documents: contentForValidation[]) => {
     const contents = documents?.filter(Boolean);
     const badWordsFilter = new BadWordsFilter();
     buildWordList(badWordsFilter);
@@ -44,10 +44,10 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
     const { id: processId } = await this.validationService.getProcessId('bad words detection', handler);
 
     // Add record of this validation process
-    const itemValidationEntry = await this.validationService.createAutomaticValidationRecord(itemId, processId, handler);
+    const itemValidationEntry = await this.validationService.createItemValidation(itemId, processId, handler);
 
     const item = await this.itemService.get(itemId, handler);
-    const suspiciousFields = this.checkBadWrods([
+    const suspiciousFields = this.checkBadWords([
       {name: 'name', value: item.name}, 
       {name: 'description', value: stripHtml(item.description)}
     ]);
@@ -56,14 +56,14 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
     const updatedItemValidationEntry = suspiciousFields.length > 0 ? 
       {...itemValidationEntry, status: Status.Fail, result: suspiciousFields.toString()} :
       {...itemValidationEntry, status: Status.Success, result: ''};
-    await this.validationService.updateAutomaticValidationRecord(updatedItemValidationEntry as ItemValidation, handler);
+    await this.validationService.updateItemValidation(updatedItemValidationEntry as ItemValidation, handler);
 
     // set task status, result and message
     this.status = 'OK';  // The task status is always 'OK', since the task itself completed successfully
     this._result = suspiciousFields;
     if (updatedItemValidationEntry.status === Status.Fail) {
       this._message = buildValidationFailMessage(suspiciousFields);
-      this.validationService.createManualReviewRecord(updatedItemValidationEntry.id, handler);
+      await this.validationService.createItemValidationReview(updatedItemValidationEntry.id, handler);
     }
     else {
       this._message = VALIDATION_SUCCESS_MESSAGE;

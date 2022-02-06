@@ -7,12 +7,12 @@ import { ItemValidationReview } from '../types';
 
 type InputType = { id: string, status?: string, reason?: string };
 
-export class UpdateManualReviewTask extends BaseValidationTask<ItemValidationReview> {
+export class UpdateItemValidationReviewTask extends BaseValidationTask<ItemValidationReview> {
   input: InputType;
   reviewer: Member;
 
   get name(): string {
-    return UpdateManualReviewTask.name;
+    return UpdateItemValidationReviewTask.name;
   }
 
   constructor(member: Member, validationService: ValidationService, input: InputType) {
@@ -28,7 +28,7 @@ export class UpdateManualReviewTask extends BaseValidationTask<ItemValidationRev
     const reviewerId = this.reviewer.id;
 
     // Update manual record
-    const entry = await this.validationService.updateManualValidationRecord(
+    const entry = await this.validationService.updateItemValidationReview(
       id, status, reason, reviewerId, handler);
 
     this.status = 'OK';

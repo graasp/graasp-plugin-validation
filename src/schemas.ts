@@ -1,3 +1,8 @@
+export const pendingReview = {
+  params: {},
+  additionalProperties: false,
+};
+
 export const validation = {
   params: {
     itemId: {

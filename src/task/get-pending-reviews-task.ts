@@ -5,9 +5,9 @@ import { ValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { FullValidationRecord } from '../types';
 
-export class GetManualReviewTask extends BaseValidationTask<FullValidationRecord[]> {
+export class GetPendingReviewsTask extends BaseValidationTask<FullValidationRecord[]> {
   get name(): string {
-    return GetManualReviewTask.name;
+    return GetPendingReviewsTask.name;
   }
 
   constructor(member: Member, validationService: ValidationService) {
@@ -18,7 +18,7 @@ export class GetManualReviewTask extends BaseValidationTask<FullValidationRecord
     this.status = 'RUNNING';
 
     // Add record of this validation process
-    const entries = await this.validationService.getManualReviewEntries(handler);
+    const entries = await this.validationService.getValidationReviewPendingEntries(handler);
 
     this.status = 'OK';
     this._result = entries;

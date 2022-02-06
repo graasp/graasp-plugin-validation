@@ -1,37 +1,34 @@
 -- create table for different validation processes
 CREATE TABLE IF NOT EXISTS item_validation_process (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  description VARCHAR(500),
   name VARCHAR(100) NOT NULL 
 );
 
-INSERT INTO item_validation_process (name)
-VALUES ('bad words detection'),
-  ('aggressive language and hate speech detection');
+INSERT INTO item_validation_process (name, description)
+VALUES ('bad-words-detection', 'check all text fields for bad words'),
+  ('aggressive-or-hate-speech-detection', 'automatically classify the description if it is considered aggressive or hate speech');
 
 -- create table for automatic validation records
 -- one record for each validation process
 CREATE TABLE IF NOT EXISTS item_validation (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  item_id UUID NOT NULL,
-  process_id UUID NOT NULL,
+  item_id UUID NOT NULL REFERENCES item("id") ON DELETE CASCADE,
+  item_validation_process_id UUID NOT NULL REFERENCES item_validation_process("id") ON DELETE CASCADE,
   status VARCHAR(20) NOT NULL DEFAULT 'pending',
   result VARCHAR(100),
-  update_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-  create_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-  FOREIGN KEY (item_id) REFERENCES item("id") ON DELETE CASCADE
-  FOREIGN KEY (process_id) REFERENCES item_validation_process("id") ON DELETE CASCADE
+  updated_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+  created_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
 )
 
 -- create table for manual validation records
 -- one record for each validation process that needs manual review
 CREATE TABLE IF NOT EXISTS item_validation_review (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  validation_id UUID NOT NULL,
-  reviewer_id UUID,
+  item_validation_id UUID NOT NULL REFERENCES item_validation("id") ON DELETE CASCADE,
+  reviewer_id UUID REFERENCES member("id") ON DELETE CASCADE,
   status VARCHAR(20) NOT NULL DEFAULT 'pending',
   reason VARCHAR(100),
-  update_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-  create_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-  FOREIGN KEY (validation_id) REFERENCES item_validation("id") ON DELETE CASCADE,
-  FOREIGN KEY (reviewer_id) REFERENCES member("id") ON DELETE CASCADE
+  updated_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+  created_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
 );
