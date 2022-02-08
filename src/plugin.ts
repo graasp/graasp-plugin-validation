@@ -39,9 +39,11 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   fastify.post<{ Params: { itemId: string }; }>(
     '/validations/:itemId',
     { schema: validation },
-    async ({ member, params: { itemId }, log }) => {
+    async ({ member, params: { itemId }, log }, reply) => {
       const task = taskManager.createScreenBadWordsTask(member, iS, itemId);
-      return runner.runSingle(task, log);
+      const result = runner.runSingle(task, log);
+      reply.status(202);
+      return result;
     },
   );
 
