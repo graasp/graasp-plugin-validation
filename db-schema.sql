@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS item_validation_status (
 INSERT INTO item_validation_status (name)
 VALUES ('pending'),
   ('success'),
-  ('fail'),
-  ('accept'),
-  ('reject');
+  ('failure'),
+  ('accepted'),
+  ('rejected');
 
 
 -- create table for automatic validation records

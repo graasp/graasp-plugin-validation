@@ -55,14 +55,14 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
 
     // Update record after the process finishes
     const updatedItemValidationEntry = suspiciousFields.length > 0 ? 
-      {...itemValidationEntry, status: Status.Fail, result: suspiciousFields.toString()} :
+      {...itemValidationEntry, status: Status.Failure, result: suspiciousFields.toString()} :
       {...itemValidationEntry, status: Status.Success, result: ''};
     await this.validationService.updateItemValidation(updatedItemValidationEntry as ItemValidation, handler);
 
     // set task status, result and message
     this.status = 'OK';  // The task status is always 'OK', since the task itself completed successfully
     this._result = suspiciousFields;
-    if (updatedItemValidationEntry.status === Status.Fail) {
+    if (updatedItemValidationEntry.status === Status.Failure) {
       this._message = buildValidationFailMessage(suspiciousFields);
       await this.validationService.createItemValidationReview(updatedItemValidationEntry.id, handler);
     }

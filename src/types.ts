@@ -6,23 +6,23 @@ export type contentForValidation = {
 export type ItemValidation = {
   id: string,
   itemId: string,
-  processId: string,
+  itemValidationProcessId: string,
   statusId: string,
   status: string,
   result: string,
-  updateAt: string,
-  createAt: string,
+  updatedAt: string,
+  createdAt: string,
 }
 
 export type ItemValidationReview = {
   id: string,
-  validationId: string,
+  itemValidationId: string,
   reviewerId: string,
   statusId: string,
   status: string,
   reason: string,
-  updateAt: string,
-  createAt: string,
+  updatedAt: string,
+  createdAt: string,
 }
 
 export type ItemValidationProcess = {
@@ -35,7 +35,7 @@ export type FullValidationRecord = {
   itemId: string,
   result: string,
   process: string,
-  createAt: string,
+  createdAt: string,
 }
 
 export type ItemValidationStatus = {
