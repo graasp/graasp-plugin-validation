@@ -3,11 +3,15 @@ export const VALIDATION_SUCCESS_MESSAGE = 'Validation passed.';
 export const buildValidationFailMessage = (suspiciousFields: string[]) => 
   (`Validation failed. The item may contain inappropriate words in ${suspiciousFields.join(', ')}`);
 
-export enum Status {
-  Accepted = 'accepted',
-  Rejected = 'rejected',
+export enum ValidationStatus {
   Success = 'success',
   Failure = 'failure',
+  Pending = 'pending',
+}
+
+export enum ValidationReviewStatus {
+  Accepted = 'accepted',
+  Rejected = 'rejected',
   Pending = 'pending',
 }
 

@@ -42,6 +42,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     async ({ member, params: { itemId }, log }, reply) => {
       const task = taskManager.createScreenBadWordsTask(member, iS, itemId);
       runner.runSingle(task, log);
+
+      // the process could take long time, so let the process run in the background and return the itemId instead
       reply.status(202);
       return itemId;
     },

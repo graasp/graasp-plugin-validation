@@ -9,8 +9,13 @@ INSERT INTO item_validation_process (name, description)
 VALUES ('bad-words-detection', 'check all text fields for bad words'),
   ('aggressive-or-hate-speech-detection', 'automatically classify the description if it is considered aggressive or hate speech');
 
--- create table for validation status
+-- create tables for validation status
 CREATE TABLE IF NOT EXISTS item_validation_status (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE IF NOT EXISTS item_validation_review_status (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name VARCHAR(50) NOT NULL
 )
@@ -18,7 +23,10 @@ CREATE TABLE IF NOT EXISTS item_validation_status (
 INSERT INTO item_validation_status (name)
 VALUES ('pending'),
   ('success'),
-  ('failure'),
+  ('failure');
+
+INSERT INTO item_validation_review_status (name)
+VALUES ('pending'),
   ('accepted'),
   ('rejected');
 

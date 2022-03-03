@@ -18,7 +18,7 @@ export class GetPendingReviewsTask extends BaseValidationTask<FullValidationReco
     this.status = 'RUNNING';
 
     // Add record of this validation process
-    const entries = await this.validationService.getValidationReviewPendingEntries(handler);
+    const entries = await this.validationService.getValidationReviewEntries(handler);
 
     this.status = 'OK';
     this._result = entries;
