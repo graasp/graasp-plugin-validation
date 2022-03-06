@@ -19,9 +19,9 @@ There will be different validation processes to check different aspects. Each va
 
 **Pending**: The process is in progress.
 
-**Success**: The item passes the test and can be published.
+**Success**: The item passes the test, which means the content of the item is judged safe, i.e. DO NOT contain inappropriate language.
 
-**Failure**: The item is suspicious, and could not be published at the moment. A failed process will wait for manual review from administrator.
+**Failure**: The item is suspicious, which means the item might contain inappropriate content. A failed process will wait for manual review from administrator. Any item containing failed process could not be published, until the content is updated or the content is later approved by an administrator.
 
 ### Status for item-validation-review
 
@@ -29,8 +29,7 @@ There will be different validation processes to check different aspects. Each va
 
 **Accepted**: The admin accepts the result of the validation, which means that the item is indeed problematic and the publication cannot proceed
 
-**Rejected**: Admin rejects the result of validation => The item is OK, and will be published.
-The admin rejects the result of the validation, which means that the item is OK and the publication cannot proceed
+**Rejected**: The admin rejects the result of the validation, which means that the The item is valid as if it passed the test. It can, for example, be published without issues.
 
 # Endpoints
 ## Start Validation

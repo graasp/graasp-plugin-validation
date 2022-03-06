@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS item_validation_review (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_validation_id UUID NOT NULL REFERENCES item_validation("id") ON DELETE CASCADE,
   reviewer_id UUID REFERENCES member("id") ON DELETE CASCADE,
-  status_id UUID NOT NULL REFERENCES item_validation_status("id") ON DELETE CASCADE,
+  status_id UUID NOT NULL REFERENCES item_validation_review_status("id") ON DELETE CASCADE,
   reason VARCHAR(100),
   updated_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
   created_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
