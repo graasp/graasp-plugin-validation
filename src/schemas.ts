@@ -1,4 +1,9 @@
-const validation = {
+export const pendingReview = {
+  params: {},
+  additionalProperties: false,
+};
+
+export const validation = {
   params: {
     itemId: {
       $ref: 'http://graasp.org/#/definitions/uuid',
@@ -8,4 +13,20 @@ const validation = {
   additionalProperties: false,
 };
 
-export { validation };
+export const validationReview = {
+  params: {
+    id: {
+      $ref: 'http://graasp.org/#/definitions/uuid',
+    },
+  },
+  body: {
+    status: {
+      type: 'string',
+    },
+    reason: {
+      type: 'string',
+    }
+  },
+  required: ['id'],
+  additionalProperties: false,
+};
