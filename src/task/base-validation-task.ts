@@ -22,8 +22,8 @@ export abstract class BaseValidationTask<R> implements Task<Actor, R> {
   getInput?: () => unknown;
   getResult?: () => unknown;
 
-  constructor(actor: Member, validationService: ValidationService) {
-    this.actor = actor;
+  constructor(member: Member, validationService: ValidationService) {
+    this.actor = member;
     this.validationService = validationService;
     this.status = 'NEW';
   }
