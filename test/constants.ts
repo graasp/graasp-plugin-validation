@@ -1,5 +1,6 @@
 import { Item, ItemMembership, Member } from 'graasp';
 import { v4 } from 'uuid';
+import { ItemValidation } from '../src/types';
 
 export const buildMember = (): Partial<Member> => ({
   id: v4(),
@@ -38,6 +39,26 @@ export const buildItem = (): Item => {
   };
 };
 
+export const BAD_ITEM = {
+  id: 'id-bad',
+  name: 'normal name',
+  description: 'Shit!',
+  type: 'folder',
+};
+
+export const GOOD_ITEM = {
+  id: 'id-good',
+  name: 'normal name',
+  description: 'Some random description',
+  type: 'folder',
+};
+
+export const SAMPLE_VALIDATION_PROCESS = {
+  id: 'process-id-1',
+  name: 'detect-bad-words',
+  description: '',
+};
+
 export const ITEM_VALIDATION_REVIEWS = [
   {
     id: 'id1',
@@ -72,3 +93,14 @@ export const ITEM_VALIDATIONS_STATUS = [
     reviewResult: 'result',
   }
 ];
+
+export const itemValidationEntry: ItemValidation = {
+  id: 'id',
+  itemId: 'item-id',
+  itemValidationProcessId: 'process-id',
+  statusId: 'status-id',
+  status: '',
+  result: '',
+  updatedAt: '',
+  createdAt: '',
+};
