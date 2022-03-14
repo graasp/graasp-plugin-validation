@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { v4 } from 'uuid';
 import plugin from '../src/plugin';
 import build from './app';
-import { buildItem, ITEM_VALIDATIONS_STATUS, ITEM_VALIDATION_REVIEWS } from './constants';
+import { buildItem, ITEM_VALIDATIONS_STATUS, ITEM_VALIDATION_REVIEWS, MOCK_STATUS } from './constants';
 
 const runner = new Runner();
 const itemService = { itemService: jest.fn() } as unknown as ItemService;
@@ -12,6 +12,27 @@ const itemService = { itemService: jest.fn() } as unknown as ItemService;
 describe('Item Validation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('GET /validations/status', () => {
+    it('Get all status', async () => {
+      const app = await build({
+        plugin,
+        runner,
+        itemService,
+      });
+      const result = MOCK_STATUS;
+      jest
+        .spyOn(runner, 'runSingle')
+        .mockImplementation(async () => result);
+
+      const res = await app.inject({
+        method: 'GET',
+        url: '/validations/status',
+      });
+      expect(res.statusCode).toBe(StatusCodes.OK);
+      expect(res.json()).toEqual(result);
+    });
   });
 
   describe('GET /validations/reviews', () => {

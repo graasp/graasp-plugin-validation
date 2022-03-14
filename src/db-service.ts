@@ -1,6 +1,6 @@
 import { sql, DatabaseTransactionConnection as TrxHandler } from 'slonik';
 import { ValidationStatus, ValidationReviewStatus } from './constants';
-import { FullValidationRecord, ItemValidation, ItemValidationProcess, ItemValidationReview, ItemValidationStatus } from './types';
+import { FullValidationRecord, ItemValidation, ItemValidationProcess, ItemValidationReview, ItemValidationStatus, Status } from './types';
 /**
  * Database's first layer of abstraction for content validation
  */
@@ -9,10 +9,12 @@ export class ValidationService{
   private static columnsForValidation = sql.join(
     [
       [['ivr', 'id'], ['id']],
-      [['iv', 'item_id'], ['itemId']],
-      [['iv', 'result'], ['result']],
-      [['ivp', 'name'], ['process']],
+      [['ivr', 'status_id'], ['reviewStatusId']],
       [['ivr', 'created_at'], ['createdAt']],
+      [['iv', 'item_id'], ['itemId']],
+      [['iv', 'status_id'], ['validationStatusId']],
+      [['iv', 'result'], ['validationResult']],
+      [['ivp', 'name'], ['process']],
     ].map((c) =>
       sql.join(
         c.map((cwa) => sql.identifier(cwa)),
@@ -26,8 +28,10 @@ export class ValidationService{
     [
       [['iv', 'status_id'], ['validationStatusId']],
       [['iv', 'result'], ['validationResult']],
+      [['iv', 'updated_at'], ['validationUpdatedAt']],
       [['ivr', 'status_id'], ['reviewStatusId']],
       [['ivr', 'reason'], ['reviewResult']],
+      [['ivr', 'updated_at'], ['reviewUpdatedAt']]
     ].map((c) =>
       sql.join(
         c.map((cwa) => sql.identifier(cwa)),
@@ -62,6 +66,18 @@ export class ValidationService{
       `,
       )
       .then(({ rows }) => rows[0].id);
+  }
+
+  async getAllStatus(transactionHandler: TrxHandler): Promise<Status[]> {
+    return transactionHandler
+      .query<Status>(
+        sql`
+        SELECT * FROM item_validation_status
+        UNION
+        SELECT * FROM item_validation_review_status
+      `,
+      )
+      .then(({ rows }) => rows.slice());
   }
 
   async getValidationReviewStatusId(name: string, transactionHandler: TrxHandler): Promise<string> {

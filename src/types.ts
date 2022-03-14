@@ -33,7 +33,9 @@ export type ItemValidationProcess = {
 export type FullValidationRecord = {
   id: string,
   itemId: string,
-  result: string,
+  reviewStatusId: string,
+  validationStatusId: string,
+  validationResult: string,
   process: string,
   createdAt: string,
 }
@@ -43,4 +45,11 @@ export type ItemValidationStatus = {
   reviewStatusId: string,
   validationResult: string,
   reviewResult: string,
+  validationUpdatedAt: string,
+  reviewUpdatedAt: string,
+}
+
+export type Status = {
+  id: string,
+  name: string,
 }

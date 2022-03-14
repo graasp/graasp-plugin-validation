@@ -1,4 +1,9 @@
-export const pendingReview = {
+export const allReview = {
+  params: {},
+  additionalProperties: false,
+};
+
+export const allStatus = {
   params: {},
   additionalProperties: false,
 };

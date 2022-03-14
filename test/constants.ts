@@ -1,6 +1,6 @@
 import { Item, ItemMembership, Member } from 'graasp';
 import { v4 } from 'uuid';
-import { ItemValidation } from '../src/types';
+import { ItemValidation, Status } from '../src/types';
 
 export const buildMember = (): Partial<Member> => ({
   id: v4(),
@@ -104,3 +104,14 @@ export const itemValidationEntry: ItemValidation = {
   updatedAt: '',
   createdAt: '',
 };
+
+export const MOCK_STATUS: Status[] = [
+  {
+    id: 'id-1',
+    name: 'name-1'
+  },
+  {
+    id: 'id-2',
+    name: 'name-2',
+  },
+];

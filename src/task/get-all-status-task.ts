@@ -3,11 +3,11 @@ import { DatabaseTransactionHandler, Member } from 'graasp';
 // local
 import { ValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
-import { FullValidationRecord } from '../types';
+import { Status } from '../types';
 
-export class GetPendingReviewsTask extends BaseValidationTask<FullValidationRecord[]> {
+export class GetAllStatusTask extends BaseValidationTask<Status[]> {
   get name(): string {
-    return GetPendingReviewsTask.name;
+    return GetAllStatusTask.name;
   }
 
   constructor(member: Member, validationService: ValidationService) {
@@ -18,7 +18,7 @@ export class GetPendingReviewsTask extends BaseValidationTask<FullValidationReco
     this.status = 'RUNNING';
 
     // Add record of this validation process
-    const entries = await this.validationService.getValidationReviewEntries(handler);
+    const entries = await this.validationService.getAllStatus(handler);
 
     this.status = 'OK';
     this._result = entries;

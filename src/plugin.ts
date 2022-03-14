@@ -4,7 +4,7 @@ import { FastifyPluginAsync } from 'fastify';
 // local
 import { ValidationService } from './db-service';
 import { TaskManager } from './task-manager';
-import { pendingReview, validation, validationReview } from './schemas';
+import { allReview, allStatus, validation, validationReview } from './schemas';
 import { ItemValidationReview } from './types';
 
 const plugin: FastifyPluginAsync = async (fastify) => {
@@ -15,10 +15,20 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   const validationService = new ValidationService();
   const taskManager = new TaskManager(validationService);
 
+  // get a list of all status
+  fastify.get(
+    '/validations/status',
+    { schema: allStatus },
+    async ({ member, log }) => {
+      const task = taskManager.createGetAllStatusTask(member);
+      return runner.runSingle(task, log);
+    },
+  );
+
   // get all entries need manual review
   fastify.get(
     '/validations/reviews',
-    { schema: pendingReview },
+    { schema: allReview },
     async ({ member, log }) => {
       const task = taskManager.createGetManualReviewTask(member);
       return runner.runSingle(task, log);
