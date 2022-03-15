@@ -1,14 +1,14 @@
-export const allReview = {
+export const reviews = {
   params: {},
   additionalProperties: false,
 };
 
-export const allStatus = {
+export const status = {
   params: {},
   additionalProperties: false,
 };
 
-export const validation = {
+export const itemValidation = {
   params: {
     itemId: {
       $ref: 'http://graasp.org/#/definitions/uuid',
@@ -18,7 +18,7 @@ export const validation = {
   additionalProperties: false,
 };
 
-export const validationReview = {
+export const itemValidationReview = {
   params: {
     id: {
       $ref: 'http://graasp.org/#/definitions/uuid',

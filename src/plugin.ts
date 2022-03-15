@@ -4,7 +4,7 @@ import { FastifyPluginAsync } from 'fastify';
 // local
 import { ValidationService } from './db-service';
 import { TaskManager } from './task-manager';
-import { allReview, allStatus, validation, validationReview } from './schemas';
+import { itemValidation, itemValidationReview, reviews, status } from './schemas';
 import { ItemValidationReview } from './types';
 
 const plugin: FastifyPluginAsync = async (fastify) => {
@@ -16,18 +16,18 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   const taskManager = new TaskManager(validationService);
 
   // get a list of all statuses
-  fastify.get('/validations/statuses', { schema: allStatus }, async ({ member, log }) => {
+  fastify.get('/validations/statuses', { schema: status }, async ({ member, log }) => {
     const task = taskManager.createGetItemValidationStatusesTask(member);
     return runner.runSingle(task, log);
   });
 
-  fastify.get('/validations/review/statuses', { schema: allStatus }, async ({ member, log }) => {
+  fastify.get('/validations/review/statuses', { schema: status }, async ({ member, log }) => {
     const task = taskManager.createGetItemValidationReviewStatusesTask(member);
     return runner.runSingle(task, log);
   });
 
   // get all entries need manual review
-  fastify.get('/validations/reviews', { schema: allReview }, async ({ member, log }) => {
+  fastify.get('/validations/reviews', { schema: reviews }, async ({ member, log }) => {
     const task = taskManager.createGetItemValidationReviewsTask(member);
     return runner.runSingle(task, log);
   });
@@ -35,7 +35,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   // get validation status of given itemId
   fastify.get<{ Params: { itemId: string } }>(
     '/validations/status/:itemId',
-    { schema: validation },
+    { schema: itemValidation },
     async ({ member, params: { itemId }, log }) => {
       const task = taskManager.createGetItemValidationAndReviewsTask(member, itemId);
       return runner.runSingle(task, log);
@@ -45,7 +45,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   // validate item with given itemId in param
   fastify.post<{ Params: { itemId: string } }>(
     '/validations/:itemId',
-    { schema: validation },
+    { schema: itemValidation },
     async ({ member, params: { itemId }, log }, reply) => {
       const task = taskManager.createDetectBadWordsTask(member, iS, itemId);
       runner.runSingle(task, log);
@@ -59,7 +59,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   // update manual review record of given entry
   fastify.post<{ Params: { id: string } }>(
     '/validations/:id/review',
-    { schema: validationReview },
+    { schema: itemValidationReview },
     async ({ member, params: { id }, body: data, log }) => {
       const task = taskManager.createUpdateItemValidationReviewTask(
         member,
