@@ -17,7 +17,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
   // get a list of all status
   fastify.get(
-    '/validations/status',
+    '/validations/statuses',
     { schema: allStatus },
     async ({ member, log }) => {
       const task = taskManager.createGetAllStatusTask(member);
