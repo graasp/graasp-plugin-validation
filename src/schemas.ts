@@ -30,7 +30,7 @@ export const validationReview = {
     },
     reason: {
       type: 'string',
-    }
+    },
   },
   required: ['id'],
   additionalProperties: false,

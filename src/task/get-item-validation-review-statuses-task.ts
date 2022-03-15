@@ -5,9 +5,9 @@ import { ValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { Status } from '../types';
 
-export class GetAllStatusTask extends BaseValidationTask<Status[]> {
+export class GetItemValidationReviewStatusesTask extends BaseValidationTask<Status[]> {
   get name(): string {
-    return GetAllStatusTask.name;
+    return GetItemValidationReviewStatusesTask.name;
   }
 
   constructor(member: Member, validationService: ValidationService) {
@@ -17,10 +17,7 @@ export class GetAllStatusTask extends BaseValidationTask<Status[]> {
   async run(handler: DatabaseTransactionHandler): Promise<void> {
     this.status = 'RUNNING';
 
-    // Add record of this validation process
-    const entries = await this.validationService.getAllStatus(handler);
-
+    this._result = await this.validationService.getItemValidationReviewStatuses(handler);
     this.status = 'OK';
-    this._result = entries;
   }
 }

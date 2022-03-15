@@ -4,7 +4,12 @@ import { StatusCodes } from 'http-status-codes';
 import { v4 } from 'uuid';
 import plugin from '../src/plugin';
 import build from './app';
-import { buildItem, ITEM_VALIDATIONS_STATUS, ITEM_VALIDATION_REVIEWS, MOCK_STATUS } from './constants';
+import {
+  buildItem,
+  ITEM_VALIDATIONS_STATUSES,
+  ITEM_VALIDATION_REVIEWS,
+  MOCK_STATUSES,
+} from './constants';
 
 const runner = new Runner();
 const itemService = { itemService: jest.fn() } as unknown as ItemService;
@@ -14,21 +19,38 @@ describe('Item Validation', () => {
     jest.clearAllMocks();
   });
 
-  describe('GET /validations/status', () => {
-    it('Get all status', async () => {
+  describe('GET /validations/statuses', () => {
+    it('Get all statuses', async () => {
       const app = await build({
         plugin,
         runner,
         itemService,
       });
-      const result = MOCK_STATUS;
-      jest
-        .spyOn(runner, 'runSingle')
-        .mockImplementation(async () => result);
+      const result = MOCK_STATUSES;
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => result);
 
       const res = await app.inject({
         method: 'GET',
-        url: '/validations/status',
+        url: '/validations/statuses',
+      });
+      expect(res.statusCode).toBe(StatusCodes.OK);
+      expect(res.json()).toEqual(result);
+    });
+  });
+
+  describe('GET /validations/review/statuses', () => {
+    it('Get all statuses', async () => {
+      const app = await build({
+        plugin,
+        runner,
+        itemService,
+      });
+      const result = MOCK_STATUSES;
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => result);
+
+      const res = await app.inject({
+        method: 'GET',
+        url: '/validations/review/statuses',
       });
       expect(res.statusCode).toBe(StatusCodes.OK);
       expect(res.json()).toEqual(result);
@@ -43,9 +65,7 @@ describe('Item Validation', () => {
         itemService,
       });
       const result = ITEM_VALIDATION_REVIEWS;
-      jest
-        .spyOn(runner, 'runSingle')
-        .mockImplementation(async () => result);
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => result);
 
       const res = await app.inject({
         method: 'GET',
@@ -61,14 +81,12 @@ describe('Item Validation', () => {
       const app = await build({
         plugin,
         runner,
-        itemService
+        itemService,
       });
 
       const item = buildItem();
-      const result = ITEM_VALIDATIONS_STATUS;
-      jest
-        .spyOn(runner, 'runSingle')
-        .mockImplementation(async () => result);
+      const result = ITEM_VALIDATIONS_STATUSES;
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => result);
 
       const res = await app.inject({
         method: 'GET',
@@ -81,12 +99,10 @@ describe('Item Validation', () => {
       const app = await build({
         plugin,
         runner,
-        itemService
+        itemService,
       });
 
-      jest
-        .spyOn(runner, 'runSingle')
-        .mockImplementation(async () => true);
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => true);
 
       const res = await app.inject({
         method: 'GET',
@@ -101,13 +117,11 @@ describe('Item Validation', () => {
       const app = await build({
         plugin,
         runner,
-        itemService
+        itemService,
       });
 
       const itemId = v4();
-      jest
-        .spyOn(runner, 'runSingle')
-        .mockImplementation(async () => itemId);
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => itemId);
 
       const res = await app.inject({
         method: 'POST',
@@ -120,7 +134,7 @@ describe('Item Validation', () => {
       const app = await build({
         plugin,
         runner,
-        itemService
+        itemService,
       });
 
       const res = await app.inject({
@@ -136,12 +150,10 @@ describe('Item Validation', () => {
       const app = await build({
         plugin,
         runner,
-        itemService
+        itemService,
       });
       const result = ITEM_VALIDATION_REVIEWS[1];
-      jest
-        .spyOn(runner, 'runSingle')
-        .mockImplementation(async () => result);
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => result);
 
       const res = await app.inject({
         method: 'POST',
@@ -158,7 +170,7 @@ describe('Item Validation', () => {
       const app = await build({
         plugin,
         runner,
-        itemService
+        itemService,
       });
       const res = await app.inject({
         method: 'POST',

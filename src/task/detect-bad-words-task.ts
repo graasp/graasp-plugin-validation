@@ -5,7 +5,12 @@ import BadWordsFilter from 'bad-words';
 import { ValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { contentForValidation, ItemValidation } from '../types';
-import { buildValidationFailMessage, ValidationProcesses, ValidationStatus, VALIDATION_SUCCESS_MESSAGE } from '../constants';
+import {
+  buildValidationFailMessage,
+  ItemValidationProcesses,
+  ItemValidationStatuses,
+  SUCCESS_MESSAGE,
+} from '../constants';
 import { buildWordList, stripHtml } from '../utils';
 
 type InputType = { itemId: string };
@@ -18,7 +23,12 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
     return DetectBadWordsTask.name;
   }
 
-  constructor(member: Member, validationService: ValidationService, itemService: ItemService, input: InputType) {
+  constructor(
+    member: Member,
+    validationService: ValidationService,
+    itemService: ItemService,
+    input: InputType,
+  ) {
     super(member, validationService);
     this.itemService = itemService;
     this.input = input;
@@ -41,32 +51,46 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
     this.status = 'RUNNING';
 
     const { itemId } = this.input;
-    const { id: processId } = await this.validationService.getProcessId(ValidationProcesses.BadWordsDetection.name, handler);
+    const { id: processId } = await this.validationService.getProcessId(
+      ItemValidationProcesses.BadWordsDetection.name,
+      handler,
+    );
 
     // Add record of this validation process
-    const itemValidationEntry = await this.validationService.createItemValidation(itemId, processId, handler);
+    const itemValidationEntry = await this.validationService.createItemValidation(
+      itemId,
+      processId,
+      handler,
+    );
 
     const item = await this.itemService.get(itemId, handler);
     const suspiciousFields = this.checkBadWords([
-      {name: 'name', value: item.name}, 
-      {name: 'description', value: stripHtml(item.description)}
+      { name: 'name', value: item.name },
+      { name: 'description', value: stripHtml(item.description) },
     ]);
 
     // Update record after the process finishes
-    const updatedItemValidationEntry: ItemValidation = suspiciousFields.length > 0 ? 
-      {...itemValidationEntry, status: ValidationStatus.Failure, result: suspiciousFields.toString()} :
-      {...itemValidationEntry, status: ValidationStatus.Success, result: ''};
+    const updatedItemValidationEntry: ItemValidation =
+      suspiciousFields.length > 0
+        ? {
+            ...itemValidationEntry,
+            status: ItemValidationStatuses.Failure,
+            result: suspiciousFields.toString(),
+          }
+        : { ...itemValidationEntry, status: ItemValidationStatuses.Success, result: '' };
     await this.validationService.updateItemValidation(updatedItemValidationEntry, handler);
 
     // set task status, result and message
     this._result = suspiciousFields;
-    if (updatedItemValidationEntry.status === ValidationStatus.Failure) {
+    if (updatedItemValidationEntry.status === ItemValidationStatuses.Failure) {
       this._message = buildValidationFailMessage(suspiciousFields);
-      await this.validationService.createItemValidationReview(updatedItemValidationEntry.id, handler);
+      await this.validationService.createItemValidationReview(
+        updatedItemValidationEntry.id,
+        handler,
+      );
+    } else {
+      this._message = SUCCESS_MESSAGE;
     }
-    else {
-      this._message = VALIDATION_SUCCESS_MESSAGE;
-    }
-    this.status = 'OK';  // The task status is always 'OK', since the task itself completed successfully
+    this.status = 'OK'; // The task status is always 'OK', since the task itself completed successfully
   }
 }

@@ -76,10 +76,10 @@ export const ITEM_VALIDATION_REVIEWS = [
     reason: '',
     updatedAt: 'ts2',
     createdAt: 'ts1',
-  }
+  },
 ];
 
-export const ITEM_VALIDATIONS_STATUS = [
+export const ITEM_VALIDATIONS_STATUSES = [
   {
     validationStatusId: 'pending-id',
     reviewStatusId: 'pending-id',
@@ -91,7 +91,7 @@ export const ITEM_VALIDATIONS_STATUS = [
     reviewStatusId: 'accept-id',
     validationResult: 'result',
     reviewResult: 'result',
-  }
+  },
 ];
 
 export const itemValidationEntry: ItemValidation = {
@@ -105,10 +105,10 @@ export const itemValidationEntry: ItemValidation = {
   createdAt: '',
 };
 
-export const MOCK_STATUS: Status[] = [
+export const MOCK_STATUSES: Status[] = [
   {
     id: 'id-1',
-    name: 'name-1'
+    name: 'name-1',
   },
   {
     id: 'id-2',
