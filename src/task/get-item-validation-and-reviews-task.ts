@@ -1,19 +1,19 @@
 // global
 import { DatabaseTransactionHandler, Member } from 'graasp';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { ItemValidationAndReview } from '../types';
 
 type InputType = { itemId: string };
 
-export class GetItemValidationAndReviewsTask extends BaseValidationTask<ItemValidationAndReview[]> {
+export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemValidationAndReview[]> {
   input: InputType;
   get name(): string {
-    return GetItemValidationAndReviewsTask.name;
+    return GetItemValidationsAndReviewsTask.name;
   }
 
-  constructor(member: Member, validationService: ValidationService, input: InputType) {
+  constructor(member: Member, validationService: ItemValidationService, input: InputType) {
     super(member, validationService);
     this.input = input;
   }

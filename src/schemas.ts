@@ -1,4 +1,4 @@
-export const reviews = {
+export const itemValidationReviews = {
   params: {},
   additionalProperties: false,
 };

@@ -49,7 +49,12 @@ export type ItemValidationAndReview = {
   reviewUpdatedAt: string;
 };
 
-export type Status = {
+export type ItemValidationStatus = {
+  id: string;
+  name: string;
+};
+
+export type ItemValidationReviewStatus = {
   id: string;
   name: string;
 };

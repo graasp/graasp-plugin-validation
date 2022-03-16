@@ -2,9 +2,9 @@
 import { FastifyPluginAsync } from 'fastify';
 
 // local
-import { ValidationService } from './db-service';
+import { ItemValidationService } from './db-service';
 import { TaskManager } from './task-manager';
-import { itemValidation, itemValidationReview, reviews, status } from './schemas';
+import { itemValidation, itemValidationReview, itemValidationReviews, status } from './schemas';
 import { ItemValidationReview } from './types';
 
 const plugin: FastifyPluginAsync = async (fastify) => {
@@ -12,8 +12,8 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     taskRunner: runner,
     items: { dbService: iS },
   } = fastify;
-  const validationService = new ValidationService();
-  const taskManager = new TaskManager(validationService);
+  const itemValidationService = new ItemValidationService();
+  const taskManager = new TaskManager(itemValidationService);
 
   // get a list of all statuses
   fastify.get('/validations/statuses', { schema: status }, async ({ member, log }) => {
@@ -27,7 +27,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
   });
 
   // get all entries need manual review
-  fastify.get('/validations/reviews', { schema: reviews }, async ({ member, log }) => {
+  fastify.get('/validations/reviews', { schema: itemValidationReviews }, async ({ member, log }) => {
     const task = taskManager.createGetItemValidationReviewsTask(member);
     return runner.runSingle(task, log);
   });

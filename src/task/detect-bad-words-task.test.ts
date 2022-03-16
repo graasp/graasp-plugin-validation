@@ -1,6 +1,6 @@
 import { DatabaseTransactionHandler, Member, Item, ItemService } from 'graasp';
 
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 import {
   BAD_ITEM,
   buildMember,
@@ -14,7 +14,7 @@ import { ItemValidationReview } from '../types';
 
 const handler = {} as unknown as DatabaseTransactionHandler;
 
-const validationService = new ValidationService();
+const validationService = new ItemValidationService();
 const itemService = { get: () => null } as unknown as ItemService;
 
 const member = buildMember() as Member;

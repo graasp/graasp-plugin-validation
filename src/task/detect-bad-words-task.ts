@@ -2,11 +2,11 @@
 import { DatabaseTransactionHandler, ItemService, Member } from 'graasp';
 import BadWordsFilter from 'bad-words';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { contentForValidation, ItemValidation } from '../types';
 import {
-  buildValidationFailMessage,
+  buildItemValidationFailMessage,
   ItemValidationProcesses,
   ItemValidationStatuses,
   SUCCESS_MESSAGE,
@@ -25,7 +25,7 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
 
   constructor(
     member: Member,
-    validationService: ValidationService,
+    validationService: ItemValidationService,
     itemService: ItemService,
     input: InputType,
   ) {
@@ -83,7 +83,7 @@ export class DetectBadWordsTask extends BaseValidationTask<string[]> {
     // set task status, result and message
     this._result = suspiciousFields;
     if (updatedItemValidationEntry.status === ItemValidationStatuses.Failure) {
-      this._message = buildValidationFailMessage(suspiciousFields);
+      this._message = buildItemValidationFailMessage(suspiciousFields);
       await this.validationService.createItemValidationReview(
         updatedItemValidationEntry.id,
         handler,

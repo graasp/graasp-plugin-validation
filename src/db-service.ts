@@ -5,13 +5,14 @@ import {
   ItemValidation,
   ItemValidationProcess,
   ItemValidationReview,
-  Status,
   ItemValidationAndReview,
+  ItemValidationStatus,
+  ItemValidationReviewStatus,
 } from './types';
 /**
  * Database's first layer of abstraction for content validation
  */
-export class ValidationService {
+export class ItemValidationService {
   private static columnsForValidation = sql.join(
     [
       [['ivr', 'id'], ['id']],
@@ -64,9 +65,9 @@ export class ValidationService {
   }
 
   // get status list to convert status-id to status
-  async getItemValidationStatuses(transactionHandler: TrxHandler): Promise<Status[]> {
+  async getItemValidationStatuses(transactionHandler: TrxHandler): Promise<ItemValidationStatus[]> {
     return transactionHandler
-      .query<Status>(
+      .query<ItemValidationStatus>(
         sql`
         SELECT * FROM item_validation_status
       `,
@@ -74,9 +75,9 @@ export class ValidationService {
       .then(({ rows }) => rows.slice());
   }
 
-  async getItemValidationReviewStatuses(transactionHandler: TrxHandler): Promise<Status[]> {
+  async getItemValidationReviewStatuses(transactionHandler: TrxHandler): Promise<ItemValidationReviewStatus[]> {
     return transactionHandler
-      .query<Status>(
+      .query<ItemValidationReviewStatus>(
         sql`
         SELECT * FROM item_validation_review_status
       `,
@@ -120,7 +121,7 @@ export class ValidationService {
         sql`
         WITH iv AS (SELECT * FROM item_validation 
         WHERE item_id = ${itemId})
-        SELECT ${ValidationService.columnsForStatus}
+        SELECT ${ItemValidationService.columnsForStatus}
         FROM iv
         LEFT JOIN item_validation_review AS ivr
         ON iv.id = ivr.item_validation_id
@@ -136,7 +137,7 @@ export class ValidationService {
     return transactionHandler
       .query<FullValidationRecord>(
         sql`
-        SELECT ${ValidationService.columnsForValidation}
+        SELECT ${ItemValidationService.columnsForValidation}
         FROM item_validation_review AS ivr
         INNER JOIN item_validation AS iv
         ON ivr.item_validation_id = iv.id

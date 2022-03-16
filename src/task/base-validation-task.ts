@@ -11,10 +11,10 @@ import {
 } from 'graasp';
 import { Member } from 'graasp';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 
 export abstract class BaseValidationTask<R> implements Task<Actor, R> {
-  protected validationService: ValidationService;
+  protected validationService: ItemValidationService;
   protected _result!: R;
   protected _message!: string;
 
@@ -30,7 +30,7 @@ export abstract class BaseValidationTask<R> implements Task<Actor, R> {
   getInput?: () => unknown;
   getResult?: () => unknown;
 
-  constructor(member: Member, validationService: ValidationService) {
+  constructor(member: Member, validationService: ItemValidationService) {
     this.actor = member;
     this.validationService = validationService;
     this.status = 'NEW';

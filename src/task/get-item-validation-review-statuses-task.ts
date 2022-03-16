@@ -1,16 +1,16 @@
 // global
 import { DatabaseTransactionHandler, Member } from 'graasp';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
-import { Status } from '../types';
+import { ItemValidationReviewStatus } from '../types';
 
-export class GetItemValidationReviewStatusesTask extends BaseValidationTask<Status[]> {
+export class GetItemValidationReviewStatusesTask extends BaseValidationTask<ItemValidationReviewStatus[]> {
   get name(): string {
     return GetItemValidationReviewStatusesTask.name;
   }
 
-  constructor(member: Member, validationService: ValidationService) {
+  constructor(member: Member, validationService: ItemValidationService) {
     super(member, validationService);
   }
 

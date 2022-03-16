@@ -1,7 +1,7 @@
-export const SUCCESS_MESSAGE = 'Validation passed.';
+export const SUCCESS_MESSAGE = 'Item validation passed.';
 
-export const buildValidationFailMessage = (suspiciousFields: string[]) =>
-  `Validation failed. The item may contain inappropriate words in ${suspiciousFields.join(', ')}`;
+export const buildItemValidationFailMessage = (suspiciousFields: string[]) =>
+  `Item validation failed. The item may contain inappropriate words in ${suspiciousFields.join(', ')}`;
 
 export enum ItemValidationStatuses {
   Success = 'success',
