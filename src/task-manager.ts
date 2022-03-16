@@ -1,34 +1,71 @@
 import { ItemService, Member } from 'graasp';
-import { ValidationService } from './db-service';
+import { ItemValidationService } from './db-service';
 import { ValidationTaskManager } from './interface/validation-task-manager';
-import { DetectBadWordsTask } from  './task/detect-bad-words-task';
-import { GetPendingReviewsTask } from './task/get-pending-reviews-task';
-import { GetValidationStatusTask } from './task/get-validation-status-task';
+import { DetectBadWordsTask } from './task/detect-bad-words-task';
+import { GetItemValidationStatusesTask } from './task/get-item-validation-statuses-task';
+import { GetValidationReviewsTask } from './task/get-validation-reviews-task';
+import { GetItemValidationsAndReviewsTask } from './task/get-item-validation-and-reviews-task';
 import { UpdateItemValidationReviewTask } from './task/update-validation-review-task';
 import { ItemValidationReview } from './types';
+import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
 
 export class TaskManager implements ValidationTaskManager {
-  private validationService: ValidationService;
+  private itemValidationService: ItemValidationService;
 
-  constructor(validationService: ValidationService) {
-    this.validationService = validationService;
+  constructor(validationService: ItemValidationService) {
+    this.itemValidationService = validationService;
   }
 
-  getScreenBadWordsTaskName(): string { return DetectBadWordsTask.name; }
-  getGetManualReviewTaskName(): string { return GetPendingReviewsTask.name; }
-  getGetValidationStatusTaskName(): string { return GetValidationStatusTask.name; }
-  getUpdateManualReviewTaskName(): string { return GetPendingReviewsTask.name; }
+  getDetectBadWordsTaskName(): string {
+    return DetectBadWordsTask.name;
+  }
+  getGetItemValidationReviewsTaskName(): string {
+    return GetValidationReviewsTask.name;
+  }
+  getGetItemValidationAndReviewsTaskName(): string {
+    return GetItemValidationsAndReviewsTask.name;
+  }
+  getUpdateItemValidationReviewTaskName(): string {
+    return GetValidationReviewsTask.name;
+  }
+  getGetItemValidationStatusesTaskName(): string {
+    return GetItemValidationStatusesTask.name;
+  }
+  getGetItemValidationReviewStatusesTaskName(): string {
+    return this.getGetItemValidationReviewStatusesTaskName.name;
+  }
 
-  createScreenBadWordsTask(member: Member, itemService: ItemService, itemId: string): DetectBadWordsTask {
-    return new DetectBadWordsTask(member, this.validationService, itemService, {itemId});
+  createDetectBadWordsTask(
+    member: Member,
+    itemService: ItemService,
+    itemId: string,
+  ): DetectBadWordsTask {
+    return new DetectBadWordsTask(member, this.itemValidationService, itemService, { itemId });
   }
-  createGetManualReviewTask(member: Member): GetPendingReviewsTask {
-    return new GetPendingReviewsTask(member, this.validationService);
+  createGetItemValidationReviewsTask(member: Member): GetValidationReviewsTask {
+    return new GetValidationReviewsTask(member, this.itemValidationService);
   }
-  createGetValidationStatusTask(member: Member, itemId: string): GetValidationStatusTask {
-    return new GetValidationStatusTask(member, this.validationService, {itemId});
+  createGetItemValidationAndReviewsTask(
+    member: Member,
+    itemId: string,
+  ): GetItemValidationsAndReviewsTask {
+    return new GetItemValidationsAndReviewsTask(member, this.itemValidationService, { itemId });
   }
-  createUpdateManualReviewTask(member: Member, id: string, data: Partial<ItemValidationReview>): UpdateItemValidationReviewTask {
-    return new UpdateItemValidationReviewTask(member, this.validationService, { id, status: data.status, reason: data.reason });
+  createUpdateItemValidationReviewTask(
+    member: Member,
+    id: string,
+    data: Partial<ItemValidationReview>,
+  ): UpdateItemValidationReviewTask {
+    return new UpdateItemValidationReviewTask(member, this.itemValidationService, {
+      id,
+      status: data.status,
+      reason: data.reason,
+    });
+  }
+  createGetItemValidationStatusesTask(member: Member): GetItemValidationStatusesTask {
+    return new GetItemValidationStatusesTask(member, this.itemValidationService);
+  }
+  createGetItemValidationReviewStatusesTask(member: Member): GetItemValidationReviewStatusesTask {
+    return new GetItemValidationReviewStatusesTask(member, this.itemValidationService);
   }
 }

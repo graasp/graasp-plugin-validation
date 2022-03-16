@@ -1,19 +1,19 @@
 // global
 import { DatabaseTransactionHandler, Member } from 'graasp';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
-import { ItemValidationStatus } from '../types';
+import { ItemValidationAndReview } from '../types';
 
 type InputType = { itemId: string };
 
-export class GetValidationStatusTask extends BaseValidationTask<ItemValidationStatus[]> {
+export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemValidationAndReview[]> {
   input: InputType;
   get name(): string {
-    return GetValidationStatusTask.name;
+    return GetItemValidationsAndReviewsTask.name;
   }
 
-  constructor(member: Member, validationService: ValidationService, input: InputType) {
+  constructor(member: Member, validationService: ItemValidationService, input: InputType) {
     super(member, validationService);
     this.input = input;
   }
@@ -23,7 +23,10 @@ export class GetValidationStatusTask extends BaseValidationTask<ItemValidationSt
     const { itemId } = this.input;
 
     // Add record of this validation process
-    const validationRecords = await this.validationService.getValidationStatus(itemId, handler);
+    const validationRecords = await this.validationService.getItemValidationAndReviews(
+      itemId,
+      handler,
+    );
 
     this.status = 'OK';
     this._result = validationRecords;

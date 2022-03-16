@@ -13,12 +13,12 @@ VALUES ('bad-words-detection', 'check all text fields for bad words'),
 CREATE TABLE IF NOT EXISTS item_validation_status (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name VARCHAR(50) NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS item_validation_review_status (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name VARCHAR(50) NOT NULL
-)
+);
 
 INSERT INTO item_validation_status (name)
 VALUES ('pending'),
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS item_validation (
   result VARCHAR(100),
   updated_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
   created_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
-)
+);
 
 -- create table for manual validation records
 -- one record for each validation process that needs manual review

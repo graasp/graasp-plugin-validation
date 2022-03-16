@@ -1,11 +1,11 @@
 // global
 import { DatabaseTransactionHandler, Member } from 'graasp';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { ItemValidationReview } from '../types';
 
-type InputType = { id: string, status?: string, reason?: string };
+type InputType = { id: string; status?: string; reason?: string };
 
 export class UpdateItemValidationReviewTask extends BaseValidationTask<ItemValidationReview> {
   input: InputType;
@@ -15,7 +15,7 @@ export class UpdateItemValidationReviewTask extends BaseValidationTask<ItemValid
     return UpdateItemValidationReviewTask.name;
   }
 
-  constructor(member: Member, validationService: ValidationService, input: InputType) {
+  constructor(member: Member, validationService: ItemValidationService, input: InputType) {
     super(member, validationService);
     this.input = input;
     this.reviewer = member;
@@ -29,7 +29,12 @@ export class UpdateItemValidationReviewTask extends BaseValidationTask<ItemValid
 
     // Update manual record
     const entry = await this.validationService.updateItemValidationReview(
-      id, status, reason, reviewerId, handler);
+      id,
+      status,
+      reason,
+      reviewerId,
+      handler,
+    );
 
     this.status = 'OK';
     this._result = entry;

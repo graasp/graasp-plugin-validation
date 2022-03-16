@@ -1,12 +1,20 @@
 // global
 import { FastifyLoggerInstance } from 'fastify';
-import { Actor, Task, TaskStatus, IndividualResultType, PreHookHandlerType, PostHookHandlerType, DatabaseTransactionHandler } from 'graasp';
+import {
+  Actor,
+  Task,
+  TaskStatus,
+  IndividualResultType,
+  PreHookHandlerType,
+  PostHookHandlerType,
+  DatabaseTransactionHandler,
+} from 'graasp';
 import { Member } from 'graasp';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 
 export abstract class BaseValidationTask<R> implements Task<Actor, R> {
-  protected validationService: ValidationService;
+  protected validationService: ItemValidationService;
   protected _result!: R;
   protected _message!: string;
 
@@ -22,15 +30,22 @@ export abstract class BaseValidationTask<R> implements Task<Actor, R> {
   getInput?: () => unknown;
   getResult?: () => unknown;
 
-  constructor(actor: Member, validationService: ValidationService) {
-    this.actor = actor;
+  constructor(member: Member, validationService: ItemValidationService) {
+    this.actor = member;
     this.validationService = validationService;
     this.status = 'NEW';
   }
 
   abstract get name(): string;
-  get result(): R { return this._result; }
-  get message(): string { return this._message; }
+  get result(): R {
+    return this._result;
+  }
+  get message(): string {
+    return this._message;
+  }
 
-  abstract run(handler: DatabaseTransactionHandler, log?: FastifyLoggerInstance): Promise<void | BaseValidationTask<R>[]>;
+  abstract run(
+    handler: DatabaseTransactionHandler,
+    log?: FastifyLoggerInstance,
+  ): Promise<void | BaseValidationTask<R>[]>;
 }

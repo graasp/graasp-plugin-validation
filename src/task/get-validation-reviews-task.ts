@@ -1,16 +1,16 @@
 // global
 import { DatabaseTransactionHandler, Member } from 'graasp';
 // local
-import { ValidationService } from '../db-service';
+import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { FullValidationRecord } from '../types';
 
-export class GetPendingReviewsTask extends BaseValidationTask<FullValidationRecord[]> {
+export class GetValidationReviewsTask extends BaseValidationTask<FullValidationRecord[]> {
   get name(): string {
-    return GetPendingReviewsTask.name;
+    return GetValidationReviewsTask.name;
   }
 
-  constructor(member: Member, validationService: ValidationService) {
+  constructor(member: Member, validationService: ItemValidationService) {
     super(member, validationService);
   }
 
@@ -18,7 +18,7 @@ export class GetPendingReviewsTask extends BaseValidationTask<FullValidationReco
     this.status = 'RUNNING';
 
     // Add record of this validation process
-    const entries = await this.validationService.getValidationReviewEntries(handler);
+    const entries = await this.validationService.getItemValidationReviews(handler);
 
     this.status = 'OK';
     this._result = entries;
