@@ -1,8 +1,5 @@
 export const SUCCESS_MESSAGE = 'Item validation passed.';
 
-export const buildItemValidationFailMessage = (suspiciousFields: string[]) =>
-  `Item validation failed. The item may contain inappropriate words in ${suspiciousFields.join(', ')}`;
-
 export enum ItemValidationStatuses {
   Success = 'success',
   Failure = 'failure',
@@ -15,14 +12,12 @@ export enum ItemValidationReviewStatuses {
   Pending = 'pending',
 }
 
-export const ItemValidationProcesses = {
-  BadWordsDetection: {
-    name: 'bad-words-detection',
-  },
-  AggressiveAndHateSpeech: {
-    name: 'aggressive-or-hate-speech-detection',
-  },
-  ImageChecking: {
-    name: 'image-checking',
-  },
-};
+export enum ItemValidationProcesses {
+  BadWordsDetection = 'bad-words-detection',
+  AggressiveAndHateSpeech = 'aggressive-or-hate-speech-detection',
+  ImageChecking = 'image-checking'
+}
+
+export enum ITEM_TYPE {
+  FOLDER = 'folder',
+}

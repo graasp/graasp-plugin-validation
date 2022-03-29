@@ -1,5 +1,5 @@
 import { sql, DatabaseTransactionConnection as TrxHandler } from 'slonik';
-import { ItemValidationStatuses, ItemValidationReviewStatuses } from './constants';
+import { ItemValidationReviewStatuses } from './constants';
 import {
   FullValidationRecord,
   ItemValidation,
@@ -52,16 +52,16 @@ export class ItemValidationService {
    * Get Id of given validation process name
    * @param name Process's name
    */
-  async getProcessId(name: string, transactionHandler: TrxHandler): Promise<ItemValidationProcess> {
+  async getEnabledProcesses(transactionHandler: TrxHandler): Promise<ItemValidationProcess[]> {
     return transactionHandler
       .query<ItemValidationProcess>(
         sql`
         SELECT * 
         FROM item_validation_process
-        WHERE name = ${name}
+        WHERE enabled = TRUE
       `,
       )
-      .then(({ rows }) => rows[0]);
+      .then(({ rows }) => rows.slice());
   }
 
   // get status list to convert status-id to status
@@ -150,25 +150,44 @@ export class ItemValidationService {
   }
 
   /**
-   * Create an entry for the automatic validation process in DB
+   * Create an entry for the validation attempt in item-validation
    * @param itemId id of the item being validated
-   * @param processId id of the validation process
    */
   async createItemValidation(
     itemId: string,
-    processId: string,
+    transactionHandler: TrxHandler,
+  ): Promise<string> {
+    return transactionHandler
+      .query<{id: string}>(
+        sql`
+          INSERT INTO item_validation (item_id)
+          VALUES (
+            ${itemId}
+          )
+          RETURNING *
+        `,
+      )
+      .then(({ rows }) => rows[0]?.id);
+  }
+
+  /**
+   * Create an entry for the automatic validation process in item-validation-group
+   * @param itemId id of the item being validated
+   * @param item-validation-id
+   */
+   async createItemValidationGroup(
+    itemId: string,
+    iVId: string,
+    iVPId: string,
+    status_id: string,
     transactionHandler: TrxHandler,
   ): Promise<ItemValidation> {
-    const status_id = await this.getValidationStatusId(
-      ItemValidationStatuses.Pending,
-      transactionHandler,
-    );
     return transactionHandler
       .query<ItemValidation>(
         sql`
-          INSERT INTO item_validation (item_id, item_validation_process_id, status_id)
+          INSERT INTO item_validation_group (item_id, item_validation_id, item_validation_process_id, status_id)
           VALUES (
-            ${itemId}, ${processId}, ${status_id}
+            ${itemId}, ${iVId}, ${iVPId}, ${status_id}
           )
           RETURNING *
         `,
@@ -182,12 +201,9 @@ export class ItemValidationService {
    */
   async createItemValidationReview(
     validationId: string,
+    status_id: string,
     transactionHandler: TrxHandler,
   ): Promise<ItemValidationReview> {
-    const status_id = await this.getValidationReviewStatusId(
-      ItemValidationReviewStatuses.Pending,
-      transactionHandler,
-    );
     return transactionHandler
       .query<ItemValidationReview>(
         sql`        
@@ -203,20 +219,18 @@ export class ItemValidationService {
 
   /**
    * Update an entry for the automatic validation process in DB
-   * @param itemValidationEntry entry with updated data
+   * @param status new status of process, failure or success
    */
-  async updateItemValidation(
-    itemValidationEntry: ItemValidation,
+  async updateItemValidationGroup(
+    id: string,
+    status_id: string,
     transactionHandler: TrxHandler,
   ): Promise<ItemValidation> {
-    const { id, status: processStatus, result } = itemValidationEntry;
-    const status_id = await this.getValidationStatusId(processStatus, transactionHandler);
     return transactionHandler
       .query<ItemValidation>(
         sql`
-        UPDATE item_validation 
+        UPDATE item_validation_group 
         SET status_id = ${status_id},
-            result = ${result},
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ${id}
       `,
@@ -230,12 +244,11 @@ export class ItemValidationService {
    */
   async updateItemValidationReview(
     id: string,
-    status: string = ItemValidationReviewStatuses.Pending,
+    status_id: string,
     reason: string = '',
     reviewerId: string,
     transactionHandler: TrxHandler,
   ): Promise<ItemValidationReview> {
-    const status_id = await this.getValidationReviewStatusId(status, transactionHandler);
     return transactionHandler
       .query<ItemValidationReview>(
         sql`

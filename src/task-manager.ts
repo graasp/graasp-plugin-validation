@@ -1,7 +1,7 @@
 import { ItemService, Member } from 'graasp';
 import { ItemValidationService } from './db-service';
 import { ValidationTaskManager } from './interface/validation-task-manager';
-import { DetectBadWordsTask } from './task/detect-bad-words-task';
+import { CreateItemValidationTask } from './task/create-item-validation-task';
 import { GetItemValidationStatusesTask } from './task/get-item-validation-statuses-task';
 import { GetValidationReviewsTask } from './task/get-validation-reviews-task';
 import { GetItemValidationsAndReviewsTask } from './task/get-item-validation-and-reviews-task';
@@ -16,8 +16,8 @@ export class TaskManager implements ValidationTaskManager {
     this.itemValidationService = validationService;
   }
 
-  getDetectBadWordsTaskName(): string {
-    return DetectBadWordsTask.name;
+  getCreateItemValidationTaskName(): string {
+    return CreateItemValidationTask.name;
   }
   getGetItemValidationReviewsTaskName(): string {
     return GetValidationReviewsTask.name;
@@ -35,12 +35,12 @@ export class TaskManager implements ValidationTaskManager {
     return this.getGetItemValidationReviewStatusesTaskName.name;
   }
 
-  createDetectBadWordsTask(
+  createCreateItemValidationTask(
     member: Member,
     itemService: ItemService,
     itemId: string,
-  ): DetectBadWordsTask {
-    return new DetectBadWordsTask(member, this.itemValidationService, itemService, { itemId });
+  ): CreateItemValidationTask {
+    return new CreateItemValidationTask(member, this.itemValidationService, itemService, { itemId });
   }
   createGetItemValidationReviewsTask(member: Member): GetValidationReviewsTask {
     return new GetValidationReviewsTask(member, this.itemValidationService);

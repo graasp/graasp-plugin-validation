@@ -6,9 +6,14 @@ export type contentForValidation = {
 export type ItemValidation = {
   id: string;
   itemId: string;
+  createdAt: string;
+};
+
+export type ItemValidationGroup = {
+  id: string;
+  itemId: string;
   itemValidationProcessId: string;
   statusId: string;
-  status: string;
   result: string;
   updatedAt: string;
   createdAt: string;

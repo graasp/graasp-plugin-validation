@@ -47,7 +47,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     '/validations/:itemId',
     { schema: itemValidation },
     async ({ member, params: { itemId }, log }, reply) => {
-      const task = taskManager.createDetectBadWordsTask(member, iS, itemId);
+      const task = taskManager.createCreateItemValidationTask(member, iS, itemId);
       runner.runSingle(task, log);
 
       // the process could take long time, so let the process run in the background and return the itemId instead
