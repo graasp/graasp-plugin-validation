@@ -98,7 +98,8 @@ export const ITEM_VALIDATIONS_STATUSES = [
 export const itemValidationGroupEntry: ItemValidationGroup = {
   id: 'id',
   itemId: 'item-id',
-  itemValidationProcessId: 'process-id',
+  itemValidationId: 'iv-id-1',
+  processId: 'process-id',
   statusId: 'status-id',
   result: '',
   updatedAt: '',

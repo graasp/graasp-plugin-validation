@@ -12,7 +12,8 @@ export type ItemValidation = {
 export type ItemValidationGroup = {
   id: string;
   itemId: string;
-  itemValidationProcessId: string;
+  itemValidationId: string;
+  processId: string;
   statusId: string;
   result: string;
   updatedAt: string;
@@ -46,12 +47,10 @@ export type FullValidationRecord = {
 };
 
 export type ItemValidationAndReview = {
-  validationStatusId: string;
+  itemValidationId: string;
   reviewStatusId: string;
-  validationResult: string;
-  reviewResult: string;
-  validationUpdatedAt: string;
-  reviewUpdatedAt: string;
+  reviewReason: string;
+  createdAt: string;
 };
 
 export type ItemValidationStatus = {

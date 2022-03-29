@@ -4,7 +4,7 @@ import { FastifyPluginAsync } from 'fastify';
 // local
 import { ItemValidationService } from './db-service';
 import { TaskManager } from './task-manager';
-import { itemValidation, itemValidationReview, itemValidationReviews, status } from './schemas';
+import { itemValidation, itemValidationGroup, itemValidationProcess, itemValidationReview, itemValidationReviews, status } from './schemas';
 import { ItemValidationReview } from './types';
 
 const plugin: FastifyPluginAsync = async (fastify) => {
@@ -42,6 +42,16 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     },
   );
 
+  // get validation status of given itemId
+  fastify.get<{ Params: { itemValidationId: string } }>(
+    '/validations/groups/:itemValidationId',
+    { schema: itemValidationGroup },
+    async ({ member, params: { itemValidationId }, log }) => {
+      const task = taskManager.createGetItemValidationGroupsTask(member, itemValidationId);
+      return runner.runSingle(task, log);
+    },
+  );
+
   // validate item with given itemId in param
   fastify.post<{ Params: { itemId: string } }>(
     '/validations/:itemId',
@@ -69,6 +79,20 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       return runner.runSingle(task, log);
     },
   );
+
+    // update item validation process
+    fastify.post<{ Params: { id: string } }>(
+      '/validations/process/:id',
+      { schema: itemValidationProcess },
+      async ({ member, params: { id }, body: data, log }) => {
+        const task = taskManager.createUpdateItemValidationProcessTask(
+          member,
+          id,
+          data as {enabled: boolean},
+        );
+        return runner.runSingle(task, log);
+      },
+    );
 };
 
 export default plugin;

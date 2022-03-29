@@ -6,9 +6,11 @@ import plugin from '../src/plugin';
 import build from './app';
 import {
   buildItem,
+  itemValidationGroupEntry,
   ITEM_VALIDATIONS_STATUSES,
   ITEM_VALIDATION_REVIEWS,
   MOCK_STATUSES,
+  SAMPLE_VALIDATION_PROCESS,
 } from './constants';
 
 const runner = new Runner();
@@ -112,6 +114,42 @@ describe('Item Validation', () => {
     });
   });
 
+  describe('GET /validations/groups/:itemValidationId', () => {
+    it('Get item validation groups', async () => {
+      const app = await build({
+        plugin,
+        runner,
+        itemService,
+      });
+
+      const itemValidationId = v4();
+      const result = [itemValidationGroupEntry];
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => result);
+
+      const res = await app.inject({
+        method: 'GET',
+        url: `/validations/groups/${itemValidationId}`,
+      });
+      expect(res.statusCode).toBe(StatusCodes.OK);
+      expect(res.json()).toEqual(result);
+    });
+    it('Bad request if id is invalid', async () => {
+      const app = await build({
+        plugin,
+        runner,
+        itemService,
+      });
+
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => true);
+
+      const res = await app.inject({
+        method: 'GET',
+        url: '/validations/groups/invalid-id',
+      });
+      expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+  });
+
   describe('POST /validations/:itemId', () => {
     it('create validation', async () => {
       const app = await build({
@@ -178,6 +216,43 @@ describe('Item Validation', () => {
         payload: {
           statusId: 'new-status-id',
           reason: 'some reasons',
+        },
+      });
+      expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    });
+  });
+
+  describe('POST /validations/process/:id', () => {
+    it('Update item-validation-process entry', async () => {
+      const app = await build({
+        plugin,
+        runner,
+        itemService,
+      });
+      const result = SAMPLE_VALIDATION_PROCESS[0];
+      jest.spyOn(runner, 'runSingle').mockImplementation(async () => result);
+
+      const res = await app.inject({
+        method: 'POST',
+        url: `/validations/process/${v4()}`,
+        payload: {
+          enabled: true,
+        },
+      });
+      expect(res.statusCode).toBe(StatusCodes.OK);
+      expect(res.json()).toEqual(result);
+    });
+    it('Bad request if entry id is invalid', async () => {
+      const app = await build({
+        plugin,
+        runner,
+        itemService,
+      });
+      const res = await app.inject({
+        method: 'POST',
+        url: '/validations/process/invalid-id',
+        payload: {
+          enabled: true,
         },
       });
       expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);

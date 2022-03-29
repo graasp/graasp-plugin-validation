@@ -1,5 +1,4 @@
 import { sql, DatabaseTransactionConnection as TrxHandler } from 'slonik';
-import { ItemValidationReviewStatuses } from './constants';
 import {
   FullValidationRecord,
   ItemValidation,
@@ -8,6 +7,7 @@ import {
   ItemValidationAndReview,
   ItemValidationStatus,
   ItemValidationReviewStatus,
+  ItemValidationGroup,
 } from './types';
 /**
  * Database's first layer of abstraction for content validation
@@ -31,14 +31,29 @@ export class ItemValidationService {
     sql`, `,
   );
 
-  private static columnsForStatus = sql.join(
+  private static columnsForState = sql.join(
     [
-      [['iv', 'status_id'], ['validationStatusId']],
-      [['iv', 'result'], ['validationResult']],
-      [['iv', 'updated_at'], ['validationUpdatedAt']],
+      [['iv', 'id'], ['itemValidationId']],
       [['ivr', 'status_id'], ['reviewStatusId']],
-      [['ivr', 'reason'], ['reviewResult']],
-      [['ivr', 'updated_at'], ['reviewUpdatedAt']],
+      [['ivr', 'reason'], ['reviewReason']],
+      [['iv', 'created_at'], ['CreatedAt']],
+    ].map((c) =>
+      sql.join(
+        c.map((cwa) => sql.identifier(cwa)),
+        sql` AS `,
+      ),
+    ),
+    sql`, `,
+  );
+
+  private static columnsForIVG = sql.join(
+    [
+      [['id'], ['id']],
+      [['item_id'], ['itemId']],
+      [['item_validation_id'], ['itemValidationId']],
+      [['item_validation_process_id'], ['processId']],
+      [['status_id'], ['statusId']],
+      [['result'], ['result']],
     ].map((c) =>
       sql.join(
         c.map((cwa) => sql.identifier(cwa)),
@@ -49,8 +64,7 @@ export class ItemValidationService {
   );
 
   /**
-   * Get Id of given validation process name
-   * @param name Process's name
+   * Get a list of all enabled processes
    */
   async getEnabledProcesses(transactionHandler: TrxHandler): Promise<ItemValidationProcess[]> {
     return transactionHandler
@@ -85,46 +99,45 @@ export class ItemValidationService {
       .then(({ rows }) => rows.slice());
   }
 
-  // get status-id with given status name
-  async getValidationReviewStatusId(name: string, transactionHandler: TrxHandler): Promise<string> {
-    return transactionHandler
-      .query<{ id: string }>(
-        sql`
-        SELECT id FROM item_validation_review_status
-        WHERE name = ${name}
-      `,
-      )
-      .then(({ rows }) => rows[0].id);
-  }
-
-  async getValidationStatusId(name: string, transactionHandler: TrxHandler): Promise<string> {
-    return transactionHandler
-      .query<{ id: string }>(
-        sql`
-        SELECT id FROM item_validation_status
-        WHERE name = ${name}
-      `,
-      )
-      .then(({ rows }) => rows[0].id);
-  }
-
   /**
-   * Get validation status given itemId
+   * Get validation state of given item
+   * Only return the latest iV entry joined with iVR
    * @param itemId id of the item being checked
    */
   async getItemValidationAndReviews(
     itemId: string,
     transactionHandler: TrxHandler,
-  ): Promise<ItemValidationAndReview[]> {
+  ): Promise<ItemValidationAndReview> {
     return transactionHandler
       .query<ItemValidationAndReview>(
         sql`
         WITH iv AS (SELECT * FROM item_validation 
         WHERE item_id = ${itemId})
-        SELECT ${ItemValidationService.columnsForStatus}
+        SELECT ${ItemValidationService.columnsForState}
         FROM iv
         LEFT JOIN item_validation_review AS ivr
         ON iv.id = ivr.item_validation_id
+        ORDER BY iv.created_at DESC
+        LIMIT 1
+      `,
+      )
+      .then(({ rows }) => rows[0]);
+  }
+
+  /**
+   * Get item validation group of given iVId
+   * @param iVId id of the item being checked
+   */
+   async getItemValidationGroups(
+    iVId: string,
+    transactionHandler: TrxHandler,
+  ): Promise<ItemValidationGroup[]> {
+    return transactionHandler
+      .query<ItemValidationGroup>(
+        sql`
+        SELECT ${ItemValidationService.columnsForIVG}
+        FROM item_validation_group
+        WHERE item_validation_id = ${iVId}
       `,
       )
       .then(({ rows }) => rows.slice());
@@ -263,4 +276,26 @@ export class ItemValidationService {
       )
       .then(({ rows }) => rows[0]);
   }
+
+    /**
+   * Update the enabled field of an item validation process
+   * @param id process id
+   * @param value string TRUE or FALSE
+   */
+     async updateItemValidationProcess(
+      id: string,
+      value: string,
+      transactionHandler: TrxHandler,
+    ): Promise<ItemValidationProcess> {
+      return transactionHandler
+        .query<ItemValidationProcess>(
+          sql`
+          UPDATE item_validation_process
+          SET enabled = ${value}
+          WHERE id = ${id}
+          RETURNING id, name
+        `,
+        )
+        .then(({ rows }) => rows[0]);
+    }
 }

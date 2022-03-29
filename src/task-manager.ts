@@ -8,6 +8,8 @@ import { GetItemValidationsAndReviewsTask } from './task/get-item-validation-and
 import { UpdateItemValidationReviewTask } from './task/update-validation-review-task';
 import { ItemValidationReview } from './types';
 import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
+import { GetItemValidationGroupsTask } from './task/get-item-validation-groups-task';
+import { UpdateItemValidationProcessTask } from './task/update-item-validation-process-task';
 
 export class TaskManager implements ValidationTaskManager {
   private itemValidationService: ItemValidationService;
@@ -32,8 +34,15 @@ export class TaskManager implements ValidationTaskManager {
     return GetItemValidationStatusesTask.name;
   }
   getGetItemValidationReviewStatusesTaskName(): string {
-    return this.getGetItemValidationReviewStatusesTaskName.name;
+    return GetItemValidationReviewStatusesTask.name;
   }
+  getGetItemValidationGroupsTaskName(): string {
+    return GetItemValidationGroupsTask.name;
+  }
+  getUpdateItemValidationProcessTaskName(): string {
+    return UpdateItemValidationProcessTask.name;
+  }
+
 
   createCreateItemValidationTask(
     member: Member,
@@ -67,5 +76,18 @@ export class TaskManager implements ValidationTaskManager {
   }
   createGetItemValidationReviewStatusesTask(member: Member): GetItemValidationReviewStatusesTask {
     return new GetItemValidationReviewStatusesTask(member, this.itemValidationService);
+  }
+  createGetItemValidationGroupsTask(member: Member, itemValidationId: string): GetItemValidationGroupsTask {
+    return new GetItemValidationGroupsTask(member, this.itemValidationService, { itemValidationId });
+  }
+  createUpdateItemValidationProcessTask(
+    member: Member,
+    id: string,
+    data: { enabled: boolean },
+  ): UpdateItemValidationProcessTask {
+    return new UpdateItemValidationProcessTask(member, this.itemValidationService, {
+      id,
+      enabled: data.enabled,
+    });
   }
 }

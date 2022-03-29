@@ -3,14 +3,14 @@ import { DatabaseTransactionHandler, Member } from 'graasp';
 // local
 import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
-import { ItemValidationAndReview } from '../types';
+import { ItemValidationGroup } from '../types';
 
-type InputType = { itemId: string };
+type InputType = { itemValidationId: string };
 
-export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemValidationAndReview> {
+export class GetItemValidationGroupsTask extends BaseValidationTask<ItemValidationGroup[]> {
   input: InputType;
   get name(): string {
-    return GetItemValidationsAndReviewsTask.name;
+    return GetItemValidationGroupsTask.name;
   }
 
   constructor(member: Member, validationService: ItemValidationService, input: InputType) {
@@ -20,15 +20,15 @@ export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemVal
 
   async run(handler: DatabaseTransactionHandler): Promise<void> {
     this.status = 'RUNNING';
-    const { itemId } = this.input;
+    const { itemValidationId } = this.input;
 
     // Add record of this validation process
-    const validationRecord = await this.validationService.getItemValidationAndReviews(
-      itemId,
+    const validationGroups = await this.validationService.getItemValidationGroups(
+      itemValidationId,
       handler,
     );
 
     this.status = 'OK';
-    this._result = validationRecord;
+    this._result = validationGroups;
   }
 }
