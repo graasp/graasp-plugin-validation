@@ -42,7 +42,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // get validation status of given itemId
+  // get iVGroups of given itemValidation
   fastify.get<{ Params: { itemValidationId: string } }>(
     '/validations/groups/:itemValidationId',
     { schema: itemValidationGroup },
