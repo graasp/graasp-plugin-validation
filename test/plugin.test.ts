@@ -222,7 +222,7 @@ describe('Item Validation', () => {
     });
   });
 
-  describe('POST /validations/process/:id', () => {
+  describe('POST /validations/process/:id/enabled', () => {
     it('Update item-validation-process entry', async () => {
       const app = await build({
         plugin,
@@ -234,7 +234,7 @@ describe('Item Validation', () => {
 
       const res = await app.inject({
         method: 'POST',
-        url: `/validations/process/${v4()}`,
+        url: `/validations/process/${v4()}/enabled`,
         payload: {
           enabled: true,
         },
@@ -250,7 +250,7 @@ describe('Item Validation', () => {
       });
       const res = await app.inject({
         method: 'POST',
-        url: '/validations/process/invalid-id',
+        url: '/validations/process/invalid-id/enabled',
         payload: {
           enabled: true,
         },
