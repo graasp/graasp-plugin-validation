@@ -9,7 +9,7 @@ import { UpdateItemValidationReviewTask } from './task/update-validation-review-
 import { ItemValidationReview } from './types';
 import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
 import { GetItemValidationGroupsTask } from './task/get-item-validation-groups-task';
-import { UpdateItemValidationProcessTask } from './task/update-item-validation-process-task';
+import { ToggleEnabledForItemValidationProcessTask } from './task/toggle-enabled-for-item-validation-process-task';
 
 export class TaskManager implements ValidationTaskManager {
   private itemValidationService: ItemValidationService;
@@ -39,8 +39,8 @@ export class TaskManager implements ValidationTaskManager {
   getGetItemValidationGroupsTaskName(): string {
     return GetItemValidationGroupsTask.name;
   }
-  getUpdateItemValidationProcessTaskName(): string {
-    return UpdateItemValidationProcessTask.name;
+  getToggleEnabledForItemValidationProcessTaskName(): string {
+    return ToggleEnabledForItemValidationProcessTask.name;
   }
 
 
@@ -80,12 +80,12 @@ export class TaskManager implements ValidationTaskManager {
   createGetItemValidationGroupsTask(member: Member, itemValidationId: string): GetItemValidationGroupsTask {
     return new GetItemValidationGroupsTask(member, this.itemValidationService, { itemValidationId });
   }
-  createUpdateItemValidationProcessTask(
+  createToggleEnabledForItemValidationProcessTask(
     member: Member,
     id: string,
     data: { enabled: boolean },
-  ): UpdateItemValidationProcessTask {
-    return new UpdateItemValidationProcessTask(member, this.itemValidationService, {
+  ): ToggleEnabledForItemValidationProcessTask {
+    return new ToggleEnabledForItemValidationProcessTask(member, this.itemValidationService, {
       id,
       enabled: data.enabled,
     });

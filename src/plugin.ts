@@ -82,10 +82,10 @@ const plugin: FastifyPluginAsync = async (fastify) => {
 
     // update item validation process
     fastify.post<{ Params: { id: string } }>(
-      '/validations/process/:id',
+      '/validations/process/:id/enabled',
       { schema: itemValidationProcess },
       async ({ member, params: { id }, body: data, log }) => {
-        const task = taskManager.createUpdateItemValidationProcessTask(
+        const task = taskManager.createToggleEnabledForItemValidationProcessTask(
           member,
           id,
           data as {enabled: boolean},

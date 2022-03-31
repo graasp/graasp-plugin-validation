@@ -1,6 +1,7 @@
 import { Item, ItemMembership, Member } from 'graasp';
 import { v4 } from 'uuid';
-import { ItemValidation, ItemValidationGroup, ItemValidationStatus } from '../src/types';
+import { ITEM_TYPE } from '../src/constants';
+import { ItemValidationGroup, ItemValidationStatus } from '../src/types';
 
 export const buildMember = (): Partial<Member> => ({
   id: v4(),
@@ -43,14 +44,14 @@ export const BAD_ITEM = {
   id: 'id-bad',
   name: 'normal name',
   description: 'Shit!',
-  type: 'app',
+  type: ITEM_TYPE.APP,
 };
 
 export const GOOD_ITEM = {
   id: 'id-good',
   name: 'normal name',
   description: 'Some random description',
-  type: 'document',
+  type: ITEM_TYPE.DOCUMENT,
 };
 
 export const SAMPLE_VALIDATION_PROCESS = [

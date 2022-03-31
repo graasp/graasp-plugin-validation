@@ -12,7 +12,6 @@ import {
 } from '../../test/constants';
 import { CreateItemValidationTask } from './create-item-validation-task';
 import { ItemValidationReview } from '../types';
-import { ItemValidationStatuses } from '../constants';
 
 const handler = {} as unknown as DatabaseTransactionHandler;
 

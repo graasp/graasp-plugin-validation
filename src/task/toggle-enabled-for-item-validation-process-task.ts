@@ -7,12 +7,12 @@ import { ItemValidationProcess } from '../types';
 
 type InputType = { id: string; enabled: boolean };
 
-export class UpdateItemValidationProcessTask extends BaseValidationTask<ItemValidationProcess> {
+export class ToggleEnabledForItemValidationProcessTask extends BaseValidationTask<ItemValidationProcess> {
   input: InputType;
   reviewer: Member;
 
   get name(): string {
-    return UpdateItemValidationProcessTask.name;
+    return ToggleEnabledForItemValidationProcessTask.name;
   }
 
   constructor(member: Member, validationService: ItemValidationService, input: InputType) {
@@ -25,12 +25,11 @@ export class UpdateItemValidationProcessTask extends BaseValidationTask<ItemVali
     this.status = 'RUNNING';
 
     const { id, enabled } = this.input;
-    const value = enabled? 'TRUE' : 'FALSE';
 
     // Update item validation process enabled or not
-    const entry = await this.validationService.updateItemValidationProcess(
+    const entry = await this.validationService.toggleEnabledForItemValidationProcess(
       id,
-      value,
+      enabled,
       handler,
     );
 

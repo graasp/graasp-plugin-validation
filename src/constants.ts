@@ -20,4 +20,6 @@ export enum ItemValidationProcesses {
 
 export enum ITEM_TYPE {
   FOLDER = 'folder',
+  APP = 'app',
+  DOCUMENT = 'document'
 }

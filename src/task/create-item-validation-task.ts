@@ -4,13 +4,12 @@ import { DatabaseTransactionHandler, Item, ItemService, Member } from 'graasp';
 import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import {
-  ItemValidationProcesses,
   ItemValidationReviewStatuses,
   ItemValidationStatuses,
   ITEM_TYPE,
 } from '../constants';
-import { getStatusIdByName, stripHtml } from '../utils';
-import { checkBadWords } from '../processes/badWordsDetection';
+import { getStatusIdByName } from '../utils';
+import { handleProcesses } from '../processes/handler';
 
 type InputType = { itemId: string };
 
@@ -68,20 +67,10 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
           handler,
         );
 
-        let status = '';
-
-        // run the process, update status
-        switch (process.name) {
-          case ItemValidationProcesses.BadWordsDetection:
-            const suspiciousFields = checkBadWords([
-              { name: 'name', value: item.name },
-              { name: 'description', value: stripHtml(item.description) },
-            ]);
-            status = suspiciousFields.length > 0 ? ItemValidationStatuses.Failure : ItemValidationStatuses.Success;
-            break;
-          default:
-            break;
-        }
+        const status = handleProcesses(process, item);
+        
+        if (status === '')
+          throw Error('Process not found');
 
         // need review if any process failed
         if (status === ItemValidationStatuses.Failure) needReview = true;
@@ -90,7 +79,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
         await this.validationService.updateItemValidationGroup(iVGEntry.id, getStatusIdByName(iVStatuses, status), handler);
       });
 
-      if (item?.type == ITEM_TYPE.FOLDER) {
+      if (item?.type === ITEM_TYPE.FOLDER) {
         const subItems = await this.itemService.getChildren(item, handler);
         subItems.forEach(async (subitem) => {
           await validateItem(subitem);
