@@ -5,15 +5,24 @@ import { FastifyPluginAsync } from 'fastify';
 import { ItemValidationService } from './db-service';
 import { TaskManager } from './task-manager';
 import { itemValidation, itemValidationGroup, itemValidationProcess, itemValidationReview, itemValidationReviews, status } from './schemas';
-import { ItemValidationReview } from './types';
+import { GraaspPluginValidationOptions } from './types';
+import { FileTaskManager, ServiceMethod } from 'graasp-plugin-file';
+import { FILE_ITEM_TYPES } from 'graasp-plugin-file-item';
 
-const plugin: FastifyPluginAsync = async (fastify) => {
+const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify, options) => {
   const {
     taskRunner: runner,
     items: { dbService: iS },
   } = fastify;
   const itemValidationService = new ItemValidationService();
   const taskManager = new TaskManager(itemValidationService);
+
+  const { serviceMethod, serviceOptions } = options;
+
+  const serviceItemType =
+    serviceMethod === ServiceMethod.S3 ? FILE_ITEM_TYPES.S3 : FILE_ITEM_TYPES.LOCAL;
+
+  const fTM = new FileTaskManager(serviceOptions, serviceMethod);
 
   // get a list of all statuses
   fastify.get('/validations/statuses', { schema: status }, async ({ member, log }) => {
@@ -57,7 +66,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
     '/validations/:itemId',
     { schema: itemValidation },
     async ({ member, params: { itemId }, log }, reply) => {
-      const task = taskManager.createCreateItemValidationTask(member, iS, itemId);
+      const task = taskManager.createCreateItemValidationTask(member, iS, fTM, runner, serviceItemType, itemId);
       runner.runSingle(task, log);
 
       // the process could take long time, so let the process run in the background and return the itemId instead
@@ -74,7 +83,7 @@ const plugin: FastifyPluginAsync = async (fastify) => {
       const task = taskManager.createUpdateItemValidationReviewTask(
         member,
         id,
-        data as Partial<ItemValidationReview>,
+        data as {status: string, reason: string},
       );
       return runner.runSingle(task, log);
     },

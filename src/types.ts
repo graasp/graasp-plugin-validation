@@ -1,3 +1,12 @@
+import { GraaspLocalFileItemOptions, GraaspS3FileItemOptions, ServiceMethod } from 'graasp-plugin-file';
+
+export interface GraaspPluginValidationOptions {
+  pathPrefix: string;
+  serviceMethod: ServiceMethod;
+  serviceOptions: { s3: GraaspS3FileItemOptions; local: GraaspLocalFileItemOptions };
+}
+
+
 export type contentForValidation = {
   name: string;
   value: string;
@@ -25,7 +34,6 @@ export type ItemValidationReview = {
   itemValidationId: string;
   reviewerId: string;
   statusId: string;
-  status: string;
   reason: string;
   updatedAt: string;
   createdAt: string;
@@ -62,3 +70,12 @@ export type ItemValidationReviewStatus = {
   id: string;
   name: string;
 };
+
+export type ImageClassifierResponse = {
+  prediction?: { 
+    image?: {
+      unsafe: number,
+      safe: number,
+    }
+  }
+}

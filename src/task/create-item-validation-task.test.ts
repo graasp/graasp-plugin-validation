@@ -5,6 +5,7 @@ import {
   BAD_ITEM,
   buildMember,
   GOOD_ITEM,
+  IMAGE_ITEM,
   itemValidationGroupEntry,
   ITEM_VALIDATION_REVIEWS,
   IVStauses,
@@ -20,42 +21,72 @@ const itemService = { get: () => null } as unknown as ItemService;
 
 const member = buildMember() as Member;
 
-describe('Run detect bad words process', () => {
-  it('Detect fields containing bad words', async () => {
-    const input = BAD_ITEM.id;
-    const item = BAD_ITEM;
-    const iVP = SAMPLE_VALIDATION_PROCESS;
-    const iVId = 'item-validation-id-1';
+// describe('Run detect bad words process', () => {
+//   const iVP = [SAMPLE_VALIDATION_PROCESS[0]];
+//   const iVId = 'item-validation-id-1';
 
-    const task = new CreateItemValidationTask(member, validationService, itemService, { itemId: input });
-    jest.spyOn(itemService, 'get').mockImplementation(async () => item as Item);
-    jest.spyOn(validationService, 'getEnabledProcesses').mockImplementation(async () => iVP);
-    jest
-      .spyOn(validationService, 'getItemValidationStatuses')
-      .mockImplementation(async () => IVStauses);
-    jest
-      .spyOn(validationService, 'getItemValidationReviewStatuses')
-      .mockImplementation(async () => IVStauses);
-    jest
-      .spyOn(validationService, 'createItemValidation')
-      .mockImplementation(async () => iVId);
-    jest
-      .spyOn(validationService, 'createItemValidationGroup')
-      .mockImplementation(async () => itemValidationGroupEntry);
-    jest
-      .spyOn(validationService, 'updateItemValidationGroup')
-      .mockImplementation(async () => itemValidationGroupEntry);
-    jest
-      .spyOn(validationService, 'createItemValidationReview')
-      .mockImplementation(async () => ITEM_VALIDATION_REVIEWS[0] as ItemValidationReview);
-    await task.run(handler);
-    expect(task.result).toEqual('pending manual review');
-  });
+//   it('Detect fields containing bad words', async () => {
+//     const input = BAD_ITEM.id;
+//     const item = BAD_ITEM;
+//     const task = new CreateItemValidationTask(member, validationService, itemService, { itemId: input });
+//     jest.spyOn(itemService, 'get').mockImplementation(async () => item as Item);
+//     jest.spyOn(validationService, 'getEnabledProcesses').mockImplementation(async () => iVP);
+//     jest
+//       .spyOn(validationService, 'getItemValidationStatuses')
+//       .mockImplementation(async () => IVStauses);
+//     jest
+//       .spyOn(validationService, 'getItemValidationReviewStatuses')
+//       .mockImplementation(async () => IVStauses);
+//     jest
+//       .spyOn(validationService, 'createItemValidation')
+//       .mockImplementation(async () => iVId);
+//     jest
+//       .spyOn(validationService, 'createItemValidationGroup')
+//       .mockImplementation(async () => itemValidationGroupEntry);
+//     jest
+//       .spyOn(validationService, 'updateItemValidationGroup')
+//       .mockImplementation(async () => itemValidationGroupEntry);
+//     jest
+//       .spyOn(validationService, 'createItemValidationReview')
+//       .mockImplementation(async () => ITEM_VALIDATION_REVIEWS[0] as ItemValidationReview);
+//     await task.run(handler);
+//     expect(task.result).toEqual('pending manual review');
+//   });
 
-  it('Return empty list if item is OK', async () => {
-    const input = GOOD_ITEM.id;
-    const item = GOOD_ITEM;
-    const iVP = SAMPLE_VALIDATION_PROCESS;
+//   it('Return empty list if item is OK', async () => {
+//     const input = GOOD_ITEM.id;
+//     const item = GOOD_ITEM;
+//     const task = new CreateItemValidationTask(member, validationService, itemService, { itemId: input });
+//     jest.spyOn(itemService, 'get').mockImplementation(async () => item as Item);
+//     jest.spyOn(validationService, 'getEnabledProcesses').mockImplementation(async () => iVP);
+//     jest
+//       .spyOn(validationService, 'createItemValidation')
+//       .mockImplementation(async () => iVId);
+//     jest
+//       .spyOn(validationService, 'getItemValidationStatuses')
+//       .mockImplementation(async () => IVStauses);
+//     jest
+//       .spyOn(validationService, 'getItemValidationReviewStatuses')
+//       .mockImplementation(async () => IVStauses);
+//     jest
+//       .spyOn(validationService, 'createItemValidationGroup')
+//       .mockImplementation(async () => itemValidationGroupEntry);
+//     jest
+//       .spyOn(validationService, 'updateItemValidationGroup')
+//       .mockImplementation(async () => itemValidationGroupEntry);
+//     jest
+//       .spyOn(validationService, 'createItemValidationReview')
+//       .mockImplementation(async () => ITEM_VALIDATION_REVIEWS[0] as ItemValidationReview);
+//     await task.run(handler);
+//     expect(task.result).toEqual('success');
+//   });
+// });
+
+describe('Run image checking process', () => {
+  it('run the image check', async () => {
+    const input = IMAGE_ITEM.id;
+    const item = IMAGE_ITEM;
+    const iVP = [SAMPLE_VALIDATION_PROCESS[1]];
     const iVId = 'item-validation-id-1';
 
     const task = new CreateItemValidationTask(member, validationService, itemService, { itemId: input });

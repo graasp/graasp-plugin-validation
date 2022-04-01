@@ -1,5 +1,9 @@
 export const SUCCESS_MESSAGE = 'Item validation passed.';
 
+export const TMP_FOLDER_PATH = './tmp';
+
+export const IMAGE_FILE_EXTENSIONS = ['.png', '.jpg' , '.jpeg' , '.jfif' , '.pjpeg' , '.pjp', ];
+
 export enum ItemValidationStatuses {
   Success = 'success',
   Failure = 'failure',
@@ -14,12 +18,15 @@ export enum ItemValidationReviewStatuses {
 
 export enum ItemValidationProcesses {
   BadWordsDetection = 'bad-words-detection',
-  AggressiveAndHateSpeech = 'aggressive-or-hate-speech-detection',
-  ImageChecking = 'image-checking'
+  AggressiveAndHateSpeech = 'aggressive-langauge-classification',
+  ImageChecking = 'image-classification'
 }
 
 export enum ITEM_TYPE {
-  FOLDER = 'folder',
+  LINK = 'embeddedLink',
   APP = 'app',
-  DOCUMENT = 'document'
+  DOCUMENT = 'document',
+  FOLDER = 'folder',
+  S3FILE = 's3File',
+  LOCALFILE = 'file',
 }

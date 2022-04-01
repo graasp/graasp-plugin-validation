@@ -1,6 +1,6 @@
 import { Item, ItemMembership, Member } from 'graasp';
 import { v4 } from 'uuid';
-import { ITEM_TYPE } from '../src/constants';
+import { ItemValidationProcesses, ITEM_TYPE } from '../src/constants';
 import { ItemValidationGroup, ItemValidationStatus } from '../src/types';
 
 export const buildMember = (): Partial<Member> => ({
@@ -54,10 +54,21 @@ export const GOOD_ITEM = {
   type: ITEM_TYPE.DOCUMENT,
 };
 
+export const IMAGE_ITEM = {
+  id: 'id-image',
+  name: 'normal name',
+  description: 'Some random description',
+  type: ITEM_TYPE.LOCALFILE,
+};
+
 export const SAMPLE_VALIDATION_PROCESS = [
   {
     id: 'process-id-1',
-    name: 'bad-words-detection',
+    name: ItemValidationProcesses.BadWordsDetection,
+  },
+  {
+    id: 'process-id-2',
+    name: ItemValidationProcesses.ImageChecking,
   }
 ];
 

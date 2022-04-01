@@ -1,7 +1,6 @@
 import { sql, DatabaseTransactionConnection as TrxHandler } from 'slonik';
 import {
   FullValidationRecord,
-  ItemValidation,
   ItemValidationProcess,
   ItemValidationReview,
   ItemValidationAndReview,
@@ -190,9 +189,9 @@ export class ItemValidationService {
     iVPId: string,
     statusId: string,
     transactionHandler: TrxHandler,
-  ): Promise<ItemValidation> {
+  ): Promise<ItemValidationGroup> {
     return transactionHandler
-      .query<ItemValidation>(
+      .query<ItemValidationGroup>(
         sql`
           INSERT INTO item_validation_group (item_id, item_validation_id, item_validation_process_id, status_id)
           VALUES (
@@ -228,20 +227,21 @@ export class ItemValidationService {
 
   /**
    * Update an entry for the automatic validation process in DB
-   * @param {string} status new status of process, failure or success
+   * @param {string} statusId new status of process, failure or success
    */
   async updateItemValidationGroup(
     id: string,
     statusId: string,
     transactionHandler: TrxHandler,
-  ): Promise<ItemValidation> {
+  ): Promise<ItemValidationGroup> {
     return transactionHandler
-      .query<ItemValidation>(
+      .query<ItemValidationGroup>(
         sql`
         UPDATE item_validation_group 
         SET status_id = ${statusId},
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ${id}
+        RETURNING *
       `,
       )
       .then(({ rows }) => rows[0]);

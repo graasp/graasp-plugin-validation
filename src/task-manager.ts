@@ -1,17 +1,16 @@
-import { ItemService, Member } from 'graasp';
+import { Actor, ItemService, Member, TaskRunner } from 'graasp';
 import { ItemValidationService } from './db-service';
-import { ValidationTaskManager } from './interface/validation-task-manager';
 import { CreateItemValidationTask } from './task/create-item-validation-task';
 import { GetItemValidationStatusesTask } from './task/get-item-validation-statuses-task';
 import { GetValidationReviewsTask } from './task/get-validation-reviews-task';
 import { GetItemValidationsAndReviewsTask } from './task/get-item-validation-and-reviews-task';
 import { UpdateItemValidationReviewTask } from './task/update-validation-review-task';
-import { ItemValidationReview } from './types';
 import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
 import { GetItemValidationGroupsTask } from './task/get-item-validation-groups-task';
 import { ToggleEnabledForItemValidationProcessTask } from './task/toggle-enabled-for-item-validation-process-task';
+import { FileTaskManager } from 'graasp-plugin-file';
 
-export class TaskManager implements ValidationTaskManager {
+export class TaskManager {
   private itemValidationService: ItemValidationService;
 
   constructor(validationService: ItemValidationService) {
@@ -47,9 +46,12 @@ export class TaskManager implements ValidationTaskManager {
   createCreateItemValidationTask(
     member: Member,
     itemService: ItemService,
+    fTM: FileTaskManager,
+    runner: TaskRunner<Actor>,
+    serviceItemType: string,
     itemId: string,
   ): CreateItemValidationTask {
-    return new CreateItemValidationTask(member, this.itemValidationService, itemService, { itemId });
+    return new CreateItemValidationTask(member, this.itemValidationService, itemService, fTM, runner, serviceItemType, { itemId });
   }
   createGetItemValidationReviewsTask(member: Member): GetValidationReviewsTask {
     return new GetValidationReviewsTask(member, this.itemValidationService);
@@ -63,7 +65,7 @@ export class TaskManager implements ValidationTaskManager {
   createUpdateItemValidationReviewTask(
     member: Member,
     id: string,
-    data: Partial<ItemValidationReview>,
+    data: {status: string, reason: string},
   ): UpdateItemValidationReviewTask {
     return new UpdateItemValidationReviewTask(member, this.itemValidationService, {
       id,
