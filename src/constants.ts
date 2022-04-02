@@ -4,6 +4,8 @@ export const TMP_FOLDER_PATH = './tmp';
 
 export const IMAGE_FILE_EXTENSIONS = ['.png', '.jpg' , '.jpeg' , '.jfif' , '.pjpeg' , '.pjp', ];
 
+export const CLASSIFIER_ENDPOINT = 'http://172.17.0.1:8080/sync';
+
 export enum ItemValidationStatuses {
   Success = 'success',
   Failure = 'failure',
@@ -30,3 +32,5 @@ export enum ITEM_TYPE {
   S3FILE = 's3File',
   LOCALFILE = 'file',
 }
+
+export const PREDICTION_THRESHOLD = 0.3;

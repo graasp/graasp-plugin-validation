@@ -68,8 +68,6 @@ export const handleProcesses = async (process: ItemValidationProcess, item: Item
         return ItemValidationStatuses.Success;
 
       const fileStorage = buildStoragePath(item.id);
-      console.log(fileStorage);
-
       const filePath = await downloadFile({filepath, itemId: item?.id, mimetype, fileStorage}) as string;
       const status = await classifyImage(filePath);
       return status;

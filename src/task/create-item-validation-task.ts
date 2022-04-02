@@ -60,7 +60,6 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
 
     // get all enabled processes
     const enabledProcesses = await this.validationService.getEnabledProcesses(handler);
-    console.log(enabledProcesses);
 
     // get map for all statuses
     const iVStatuses = await this.validationService.getItemValidationStatuses(handler);
@@ -83,10 +82,13 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
           getStatusIdByName(iVStatuses, ItemValidationStatuses.Pending),
           handler,
         ).then(data => data);
-        console.log(iVGEntry);
 
-        const status = await handleProcesses(process, item, this.fTM, this.actor, this.runner);
-        console.log('status', status);
+        const status = await handleProcesses(process, item, this.fTM, this.actor, this.runner).catch(error => {
+          // log the error
+          console.error(error);
+          // if some error happend during the execution of a process, we consider the it failed
+          return ItemValidationStatuses.Failure;
+        });
         
         if (status === '')
           throw new ProcessNotFoundError(process.name);
@@ -102,18 +104,26 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
 
       // execute each process on item
       await Promise.all(enabledProcesses.map(async (process) => {
-        await executeProcess(process);
+        await executeProcess(process).catch(error => {
+          throw(error(`Error occurs when executing process ${process.name}`));
+        });
       }));
 
       if (item?.type === ITEM_TYPE.FOLDER) {
         const subItems = await this.itemService.getChildren(item, handler);
         await Promise.all(subItems.map(async (subitem) => {
-          await validateItem(subitem);
+          await validateItem(subitem).catch(error => {
+            throw(error(`Error occurs when validating item ${subitem?.name}`));
+          });
         }));
       }
     };
 
-    await validateItem(item);
+    await validateItem(item).catch(error => {
+      console.error(error);
+      // if error occurs, we would like a manual review on the item
+      needReview = true;
+    });
 
     // create entry for review
     const iVRStatuses = await this.validationService.getItemValidationReviewStatuses(handler);
@@ -122,8 +132,6 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
       getStatusIdByName(iVRStatuses, ItemValidationReviewStatuses.Pending),
       handler,
     );
-
-    console.log('All finishing...');
 
     this._message = 'Item validation task executed.';
     // the result is only used for testing

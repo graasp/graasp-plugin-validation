@@ -7,11 +7,21 @@ The Graasp Explorer is designed to be a platform to share and explore open educa
 ## Validation Process
 There will be different validation processes to check different aspects. Each validation process will have a record in DB.
 
-### Existing
-- Bad Words Detection (JS)
-### In progress
-- Aggressive and Hate Speech Classification (Python)
-- Image Checking
+### Bad Words Detection 
+Depends on two npm packages:  
+https://www.npmjs.com/package/bad-words  
+https://www.npmjs.com/package/french-badwords-list
+### Image Checking
+The image classifier is based on this open-source repo:   
+https://github.com/notAI-tech/NudeNet  
+To spin up the container of classifier, run  
+`docker run -it -p8080:8080 notaitech/nudenet:classifier`  
+The repo further provides a python package and detector.  
+An alternative choice is another open-source repo:  
+https://github.com/infinitered/nsfwjs#quick-how-to-use-the-module
+
+### Aggressive and Hate Speech Classification (In progress)
+
 
 ## Status
 
