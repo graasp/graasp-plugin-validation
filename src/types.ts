@@ -1,7 +1,7 @@
 import { GraaspLocalFileItemOptions, GraaspS3FileItemOptions, ServiceMethod } from 'graasp-plugin-file';
 
 export interface GraaspPluginValidationOptions {
-  pathPrefix: string;
+  classifierApi: string;
   serviceMethod: ServiceMethod;
   serviceOptions: { s3: GraaspS3FileItemOptions; local: GraaspLocalFileItemOptions };
 }

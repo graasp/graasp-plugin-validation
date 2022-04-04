@@ -13,7 +13,7 @@ type props = {
 };
 
 export const DEFAULT_OPTIONS = {
-  pathPrefix: 'pathPrefix',
+  classifierApi: 'localhost',
   serviceMethod: ServiceMethod.LOCAL,
   serviceOptions: {
     s3: {

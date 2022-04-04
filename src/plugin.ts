@@ -9,6 +9,8 @@ import { GraaspPluginValidationOptions } from './types';
 import { FileTaskManager, ServiceMethod } from 'graasp-plugin-file';
 import { FILE_ITEM_TYPES } from 'graasp-plugin-file-item';
 
+export let classifierEndpoint: string;
+
 const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify, options) => {
   const {
     taskRunner: runner,
@@ -17,7 +19,8 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   const itemValidationService = new ItemValidationService();
   const taskManager = new TaskManager(itemValidationService);
 
-  const { serviceMethod, serviceOptions } = options;
+  const { serviceMethod, serviceOptions, classifierApi } = options;
+  classifierEndpoint = classifierApi;
 
   const serviceItemType =
     serviceMethod === ServiceMethod.S3 ? FILE_ITEM_TYPES.S3 : FILE_ITEM_TYPES.LOCAL;
