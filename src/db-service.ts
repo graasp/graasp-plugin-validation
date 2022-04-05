@@ -86,7 +86,9 @@ export class ItemValidationService {
       .then(({ rows }) => rows.slice());
   }
 
-  async getItemValidationReviewStatuses(transactionHandler: TrxHandler): Promise<ItemValidationReviewStatus[]> {
+  async getItemValidationReviewStatuses(
+    transactionHandler: TrxHandler,
+  ): Promise<ItemValidationReviewStatus[]> {
     return transactionHandler
       .query<ItemValidationReviewStatus>(
         sql`
@@ -101,7 +103,7 @@ export class ItemValidationService {
    * Only return the latest iV entry joined with iVR
    * @param itemId id of the item being checked
    */
-  async getItemValidationAndReviews(
+  async getLastItemValidationAndReviews(
     itemId: string,
     transactionHandler: TrxHandler,
   ): Promise<ItemValidationAndReview> {
@@ -125,7 +127,7 @@ export class ItemValidationService {
    * Get item validation groups of given iVId
    * @param iVId id of the item being checked
    */
-   async getItemValidationGroups(
+  async getItemValidationGroups(
     iVId: string,
     transactionHandler: TrxHandler,
   ): Promise<ItemValidationGroup[]> {
@@ -161,12 +163,9 @@ export class ItemValidationService {
    * Create an entry for the validation attempt in item-validation
    * @param itemId id of the item being validated
    */
-  async createItemValidation(
-    itemId: string,
-    transactionHandler: TrxHandler,
-  ): Promise<string> {
+  async createItemValidation(itemId: string, transactionHandler: TrxHandler): Promise<string> {
     return transactionHandler
-      .query<{id: string}>(
+      .query<{ id: string }>(
         sql`
           INSERT INTO item_validation (item_id)
           VALUES (
@@ -183,7 +182,7 @@ export class ItemValidationService {
    * @param itemId id of the item being validated
    * @param item-validation-id
    */
-   async createItemValidationGroup(
+  async createItemValidationGroup(
     itemId: string,
     iVId: string,
     iVPId: string,
@@ -273,25 +272,25 @@ export class ItemValidationService {
       .then(({ rows }) => rows[0]);
   }
 
-    /**
+  /**
    * Toggle the enabled field of an item validation process
    * @param id process id
    * @param {boolean}
    */
-     async toggleEnabledForItemValidationProcess(
-      id: string,
-      value: boolean,
-      transactionHandler: TrxHandler,
-    ): Promise<ItemValidationProcess> {
-      return transactionHandler
-        .query<ItemValidationProcess>(
-          sql`
+  async setEnabledForItemValidationProcess(
+    id: string,
+    value: boolean,
+    transactionHandler: TrxHandler,
+  ): Promise<ItemValidationProcess> {
+    return transactionHandler
+      .query<ItemValidationProcess>(
+        sql`
           UPDATE item_validation_process
           SET enabled = ${sql.json(value)}
           WHERE id = ${id}
           RETURNING id, name
         `,
-        )
-        .then(({ rows }) => rows[0]);
-    }
+      )
+      .then(({ rows }) => rows[0]);
+  }
 }

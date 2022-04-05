@@ -9,6 +9,10 @@ import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-
 import { GetItemValidationGroupsTask } from './task/get-item-validation-groups-task';
 import { ToggleEnabledForItemValidationProcessTask } from './task/toggle-enabled-for-item-validation-process-task';
 import { FileTaskManager } from 'graasp-plugin-file';
+import {
+  SetEnabledForItemValidationProcessTaskInput,
+  UpdateItemValidationReviewTaskInput,
+} from './types';
 
 export class TaskManager {
   private itemValidationService: ItemValidationService;
@@ -42,16 +46,25 @@ export class TaskManager {
     return ToggleEnabledForItemValidationProcessTask.name;
   }
 
-
   createCreateItemValidationTask(
     member: Member,
     itemService: ItemService,
     fTM: FileTaskManager,
     runner: TaskRunner<Actor>,
     serviceItemType: string,
+    classifierApi: string,
     itemId: string,
   ): CreateItemValidationTask {
-    return new CreateItemValidationTask(member, this.itemValidationService, itemService, fTM, runner, serviceItemType, { itemId });
+    return new CreateItemValidationTask(
+      member,
+      this.itemValidationService,
+      itemService,
+      fTM,
+      runner,
+      serviceItemType,
+      classifierApi,
+      { itemId },
+    );
   }
   createGetItemValidationReviewsTask(member: Member): GetValidationReviewsTask {
     return new GetValidationReviewsTask(member, this.itemValidationService);
@@ -65,7 +78,7 @@ export class TaskManager {
   createUpdateItemValidationReviewTask(
     member: Member,
     id: string,
-    data: {status: string, reason: string},
+    data: UpdateItemValidationReviewTaskInput,
   ): UpdateItemValidationReviewTask {
     return new UpdateItemValidationReviewTask(member, this.itemValidationService, {
       id,
@@ -79,13 +92,18 @@ export class TaskManager {
   createGetItemValidationReviewStatusesTask(member: Member): GetItemValidationReviewStatusesTask {
     return new GetItemValidationReviewStatusesTask(member, this.itemValidationService);
   }
-  createGetItemValidationGroupsTask(member: Member, itemValidationId: string): GetItemValidationGroupsTask {
-    return new GetItemValidationGroupsTask(member, this.itemValidationService, { itemValidationId });
+  createGetItemValidationGroupsTask(
+    member: Member,
+    itemValidationId: string,
+  ): GetItemValidationGroupsTask {
+    return new GetItemValidationGroupsTask(member, this.itemValidationService, {
+      itemValidationId,
+    });
   }
   createToggleEnabledForItemValidationProcessTask(
     member: Member,
     id: string,
-    data: { enabled: boolean },
+    data: SetEnabledForItemValidationProcessTaskInput,
   ): ToggleEnabledForItemValidationProcessTask {
     return new ToggleEnabledForItemValidationProcessTask(member, this.itemValidationService, {
       id,

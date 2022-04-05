@@ -23,7 +23,7 @@ export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemVal
     const { itemId } = this.input;
 
     // Get record of this validation process
-    const validationRecord = await this.validationService.getItemValidationAndReviews(
+    const validationRecord = await this.validationService.getLastItemValidationAndReviews(
       itemId,
       handler,
     );

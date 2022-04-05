@@ -5,7 +5,9 @@ import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { ItemValidationReviewStatus } from '../types';
 
-export class GetItemValidationReviewStatusesTask extends BaseValidationTask<ItemValidationReviewStatus[]> {
+export class GetItemValidationReviewStatusesTask extends BaseValidationTask<
+  ItemValidationReviewStatus[]
+> {
   get name(): string {
     return GetItemValidationReviewStatusesTask.name;
   }

@@ -4,12 +4,17 @@ import { FastifyPluginAsync } from 'fastify';
 // local
 import { ItemValidationService } from './db-service';
 import { TaskManager } from './task-manager';
-import { itemValidation, itemValidationGroup, itemValidationProcess, itemValidationReview, itemValidationReviews, status } from './schemas';
+import {
+  itemValidation,
+  itemValidationGroup,
+  itemValidationProcess,
+  itemValidationReview,
+  itemValidationReviews,
+  status,
+} from './schemas';
 import { GraaspPluginValidationOptions } from './types';
 import { FileTaskManager, ServiceMethod } from 'graasp-plugin-file';
 import { FILE_ITEM_TYPES } from 'graasp-plugin-file-item';
-
-export let classifierEndpoint: string;
 
 const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify, options) => {
   const {
@@ -19,8 +24,8 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   const itemValidationService = new ItemValidationService();
   const taskManager = new TaskManager(itemValidationService);
 
+  // classifierApi is the host api of the container running the image classifier
   const { serviceMethod, serviceOptions, classifierApi } = options;
-  classifierEndpoint = classifierApi;
 
   const serviceItemType =
     serviceMethod === ServiceMethod.S3 ? FILE_ITEM_TYPES.S3 : FILE_ITEM_TYPES.LOCAL;
@@ -39,10 +44,14 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   });
 
   // get all entries need manual review
-  fastify.get('/validations/reviews', { schema: itemValidationReviews }, async ({ member, log }) => {
-    const task = taskManager.createGetItemValidationReviewsTask(member);
-    return runner.runSingle(task, log);
-  });
+  fastify.get(
+    '/validations/reviews',
+    { schema: itemValidationReviews },
+    async ({ member, log }) => {
+      const task = taskManager.createGetItemValidationReviewsTask(member);
+      return runner.runSingle(task, log);
+    },
+  );
 
   // get validation status of given itemId
   fastify.get<{ Params: { itemId: string } }>(
@@ -69,7 +78,15 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
     '/validations/:itemId',
     { schema: itemValidation },
     async ({ member, params: { itemId }, log }, reply) => {
-      const task = taskManager.createCreateItemValidationTask(member, iS, fTM, runner, serviceItemType, itemId);
+      const task = taskManager.createCreateItemValidationTask(
+        member,
+        iS,
+        fTM,
+        runner,
+        serviceItemType,
+        classifierApi,
+        itemId,
+      );
       runner.runSingle(task, log);
 
       // the process could take long time, so let the process run in the background and return the itemId instead
@@ -79,32 +96,24 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   );
 
   // update manual review record of given entry
-  fastify.post<{ Params: { id: string } }>(
+  fastify.post<{ Params: { id: string }; Body: { status: string; reason: string } }>(
     '/validations/:id/review',
     { schema: itemValidationReview },
     async ({ member, params: { id }, body: data, log }) => {
-      const task = taskManager.createUpdateItemValidationReviewTask(
-        member,
-        id,
-        data as {status: string, reason: string},
-      );
+      const task = taskManager.createUpdateItemValidationReviewTask(member, id, data);
       return runner.runSingle(task, log);
     },
   );
 
-    // update item validation process
-    fastify.post<{ Params: { id: string } }>(
-      '/validations/process/:id/enabled',
-      { schema: itemValidationProcess },
-      async ({ member, params: { id }, body: data, log }) => {
-        const task = taskManager.createToggleEnabledForItemValidationProcessTask(
-          member,
-          id,
-          data as {enabled: boolean},
-        );
-        return runner.runSingle(task, log);
-      },
-    );
+  // update item validation process
+  fastify.post<{ Params: { id: string }; Body: { enabled: boolean } }>(
+    '/validations/process/:id/enabled',
+    { schema: itemValidationProcess },
+    async ({ member, params: { id }, body: data, log }) => {
+      const task = taskManager.createToggleEnabledForItemValidationProcessTask(member, id, data);
+      return runner.runSingle(task, log);
+    },
+  );
 };
 
 export default plugin;

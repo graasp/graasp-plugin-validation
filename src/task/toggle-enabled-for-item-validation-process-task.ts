@@ -27,7 +27,7 @@ export class ToggleEnabledForItemValidationProcessTask extends BaseValidationTas
     const { id, enabled } = this.input;
 
     // Update item validation process enabled or not
-    const entry = await this.validationService.toggleEnabledForItemValidationProcess(
+    const entry = await this.validationService.setEnabledForItemValidationProcess(
       id,
       enabled,
       handler,

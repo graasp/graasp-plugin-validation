@@ -1,4 +1,5 @@
 import { Item, ItemMembership, Member } from 'graasp';
+import { ServiceMethod } from 'graasp-plugin-file';
 import { v4 } from 'uuid';
 import { ItemValidationProcesses, ITEM_TYPE } from '../src/constants';
 import { ItemValidationGroup, ItemValidationStatus } from '../src/types';
@@ -38,6 +39,22 @@ export const buildItem = (): Item => {
       showChatBox: false,
     },
   };
+};
+
+export const DEFAULT_OPTIONS = {
+  classifierApi: 'localhost',
+  serviceMethod: ServiceMethod.LOCAL,
+  serviceOptions: {
+    s3: {
+      s3Region: 's3Region',
+      s3Bucket: 's3Bucket',
+      s3AccessKeyId: 's3AccessKeyId',
+      s3SecretAccessKey: 's3SecretAccessKey',
+    },
+    local: {
+      storageRootPath: 'storageRootPath',
+    },
+  },
 };
 
 export const BAD_ITEM = {
@@ -139,3 +156,5 @@ export const IVStauses = [
     name: 'status-2'
   }
 ];
+
+export const MOCK_CLASSIFIER_API = 'localhost';

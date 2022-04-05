@@ -3,29 +3,13 @@ import { ItemService } from 'graasp';
 import { TaskRunner } from 'graasp-test';
 import common from './common';
 import { GraaspPluginValidationOptions } from '../src/types';
-import { ServiceMethod } from 'graasp-plugin-file';
+import { DEFAULT_OPTIONS } from './constants';
 
 type props = {
   runner: TaskRunner;
   options?: GraaspPluginValidationOptions;
   plugin: FastifyPluginAsync<GraaspPluginValidationOptions>;
   itemService: ItemService;
-};
-
-export const DEFAULT_OPTIONS = {
-  classifierApi: 'localhost',
-  serviceMethod: ServiceMethod.LOCAL,
-  serviceOptions: {
-    s3: {
-      s3Region: 's3Region',
-      s3Bucket: 's3Bucket',
-      s3AccessKeyId: 's3AccessKeyId',
-      s3SecretAccessKey: 's3SecretAccessKey',
-    },
-    local: {
-      storageRootPath: 'storageRootPath',
-    },
-  },
 };
 
 const build = async ({ plugin, runner, itemService }: props) => {

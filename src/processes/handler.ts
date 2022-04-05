@@ -1,43 +1,36 @@
-import { ReadStream } from 'fs';
 import { Actor, Item, Member, TaskRunner } from 'graasp';
 import { FileTaskManager, LocalFileItemExtra, S3FileItemExtra } from 'graasp-plugin-file';
 import { FILE_ITEM_TYPES } from 'graasp-plugin-file-item';
 import path from 'path';
 import mime from 'mime-types';
-import { IMAGE_FILE_EXTENSIONS, ItemValidationProcesses, ItemValidationStatuses } from '../constants';
+import {
+  IMAGE_FILE_EXTENSIONS,
+  ItemValidationProcesses,
+  ItemValidationStatuses,
+} from '../constants';
 import { ItemValidationProcess } from '../types';
-import { buildStoragePath, stripHtml } from '../utils';
+import { buildStoragePath, downloadFile, stripHtml } from '../utils';
 import { checkBadWords } from './badWordsDetection';
 import { classifyImage } from './imageClassification';
-import { InvalidFileItemError } from '../errors';
-import { DownloadFileInputType } from 'graasp-plugin-file/dist/tasks/download-file-task';
+import { InvalidFileItemError, ProcessNotFoundError } from '../errors';
 
-export const handleProcesses = async (process: ItemValidationProcess, item: Item, fTM: FileTaskManager, member: Member, runner: TaskRunner<Actor>): Promise<string> => {
-  const downloadFile = async ({
-    filepath,
-    itemId,
-    mimetype,
-    fileStorage,
-  }: DownloadFileInputType) => {
-    const task = fTM.createDownloadFileTask(member, {
-      filepath,
-      itemId,
-      mimetype,
-      fileStorage,
-    });
-
-    // if file not found, an error will be thrown by this line
-    const fileStream = (await runner.runSingle(task)) as ReadStream;
-    return fileStream.path;
-  };
-
+export const handleProcesses = async (
+  process: ItemValidationProcess,
+  item: Item,
+  fTM: FileTaskManager,
+  member: Member,
+  runner: TaskRunner<Actor>,
+  classifierApi: string,
+): Promise<string> => {
   switch (process.name) {
     case ItemValidationProcesses.BadWordsDetection:
       const suspiciousFields = checkBadWords([
         { name: 'name', value: item.name },
         { name: 'description', value: stripHtml(item.description) },
       ]);
-      return suspiciousFields.length > 0 ? ItemValidationStatuses.Failure : ItemValidationStatuses.Success;
+      return suspiciousFields.length > 0
+        ? ItemValidationStatuses.Failure
+        : ItemValidationStatuses.Success;
       break;
     case ItemValidationProcesses.ImageChecking:
       let filepath = '';
@@ -56,7 +49,7 @@ export const handleProcesses = async (process: ItemValidationProcess, item: Item
       if (!filepath || !mimetype) {
         throw new InvalidFileItemError(item);
       }
-      
+
       let ext = path.extname(item.name);
       if (!ext) {
         // only add a dot in case of building file name with mimetype, otherwise there will be two dots in file name
@@ -64,15 +57,20 @@ export const handleProcesses = async (process: ItemValidationProcess, item: Item
       }
 
       // if file is not an image, return success
-      if (!IMAGE_FILE_EXTENSIONS.includes(ext))
-        return ItemValidationStatuses.Success;
+      if (!IMAGE_FILE_EXTENSIONS.includes(ext)) return ItemValidationStatuses.Success;
 
       const fileStorage = buildStoragePath(item.id);
-      const filePath = await downloadFile({filepath, itemId: item?.id, mimetype, fileStorage}) as string;
-      const status = await classifyImage(filePath);
+      const filePath = (await downloadFile(
+        { filepath, itemId: item?.id, mimetype, fileStorage },
+        fTM,
+        member,
+        runner,
+      )) as string;
+      const status = await classifyImage(classifierApi, filePath);
       return status;
       break;
     default:
+      throw new ProcessNotFoundError();
       break;
   }
   return '';

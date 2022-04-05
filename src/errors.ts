@@ -23,7 +23,7 @@ export class InvalidFileItemError extends GraaspValidationError {
   constructor(data?: unknown) {
     super(
       {
-        code: 'GPIZERR003',
+        code: 'GPVERR001',
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'File properties are invalid.',
       },
@@ -32,11 +32,11 @@ export class InvalidFileItemError extends GraaspValidationError {
   }
 }
 
-export class FaildImageClassificationRequestError extends GraaspValidationError {
+export class FailedImageClassificationRequestError extends GraaspValidationError {
   constructor(data?: unknown) {
     super(
       {
-        code: 'GPIZERR003',
+        code: 'GPVERR002',
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'Image classification request failed',
       },
@@ -49,9 +49,35 @@ export class ProcessNotFoundError extends GraaspValidationError {
   constructor(data?: unknown) {
     super(
       {
-        code: 'GPIZERR003',
+        code: 'GPVERR003',
         statusCode: StatusCodes.BAD_REQUEST,
         message: 'Process Not Found',
+      },
+      data,
+    );
+  }
+}
+
+export class ProcessExecutionError extends GraaspValidationError {
+  constructor(process: string, data?: unknown) {
+    super(
+      {
+        code: 'GPVERR004',
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: `An error occurs during execution process: ${process}`,
+      },
+      data,
+    );
+  }
+}
+
+export class ItemValidationError extends GraaspValidationError {
+  constructor(data?: unknown) {
+    super(
+      {
+        code: 'GPVERR005',
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'An error occurs during validating item',
       },
       data,
     );

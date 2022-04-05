@@ -9,16 +9,18 @@ There will be different validation processes to check different aspects. Each va
 
 ### Bad Words Detection 
 Depends on two npm packages:  
-https://www.npmjs.com/package/bad-words  
-https://www.npmjs.com/package/french-badwords-list
+- [bad-words](https://www.npmjs.com/package/bad-words)  
+- [frenchy-badwords-list](https://www.npmjs.com/package/french-badwords-list)
 ### Image Checking
 The image classifier is based on this open-source repo:   
-https://github.com/notAI-tech/NudeNet  
-To spin up the container of classifier, run  
-`docker run -it -p8080:8080 notaitech/nudenet:classifier`  
-The repo further provides a python package and detector.  
-An alternative choice is another open-source repo:  
-https://github.com/infinitered/nsfwjs#quick-how-to-use-the-module
+- [NudeNet](https://github.com/notAI-tech/NudeNet )  
+  - A pre-trained classifier based on deep learning developed in Python. Also available as a docker image.
+  - To spin up the container of classifier, run  
+`docker run -it -p 8080:8080 notaitech/nudenet:classifier`  
+  - The repo further provides a python package and detector.  
+- An alternative choice is another open-source repo:  
+[NSFW.js](https://github.com/infinitered/nsfwjs#quick-how-to-use-the-module). Also a pre-trained classifier based on deep learning but developed with JavaScript and tensorflow.js  
+
 
 ### Aggressive and Hate Speech Classification (In progress)
 
