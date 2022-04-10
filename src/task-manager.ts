@@ -3,11 +3,11 @@ import { ItemValidationService } from './db-service';
 import { CreateItemValidationTask } from './task/create-item-validation-task';
 import { GetItemValidationStatusesTask } from './task/get-item-validation-statuses-task';
 import { GetValidationReviewsTask } from './task/get-validation-reviews-task';
-import { GetItemValidationsAndReviewsTask } from './task/get-item-validation-and-reviews-task';
+import { GetLastItemValidationsAndReviewsTask } from './task/get-last-item-validation-and-reviews-task';
 import { UpdateItemValidationReviewTask } from './task/update-validation-review-task';
 import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
 import { GetItemValidationGroupsTask } from './task/get-item-validation-groups-task';
-import { ToggleEnabledForItemValidationProcessTask } from './task/toggle-enabled-for-item-validation-process-task';
+import { SetEnabledForItemValidationProcessTask } from './task/set-enabled-for-item-validation-process-task';
 import { FileTaskManager } from 'graasp-plugin-file';
 import {
   SetEnabledForItemValidationProcessTaskInput,
@@ -28,7 +28,7 @@ export class TaskManager {
     return GetValidationReviewsTask.name;
   }
   getGetItemValidationAndReviewsTaskName(): string {
-    return GetItemValidationsAndReviewsTask.name;
+    return GetLastItemValidationsAndReviewsTask.name;
   }
   getUpdateItemValidationReviewTaskName(): string {
     return GetValidationReviewsTask.name;
@@ -42,8 +42,8 @@ export class TaskManager {
   getGetItemValidationGroupsTaskName(): string {
     return GetItemValidationGroupsTask.name;
   }
-  getToggleEnabledForItemValidationProcessTaskName(): string {
-    return ToggleEnabledForItemValidationProcessTask.name;
+  getSetEnabledForItemValidationProcessTaskName(): string {
+    return SetEnabledForItemValidationProcessTask.name;
   }
 
   createCreateItemValidationTask(
@@ -72,8 +72,8 @@ export class TaskManager {
   createGetItemValidationAndReviewsTask(
     member: Member,
     itemId: string,
-  ): GetItemValidationsAndReviewsTask {
-    return new GetItemValidationsAndReviewsTask(member, this.itemValidationService, { itemId });
+  ): GetLastItemValidationsAndReviewsTask {
+    return new GetLastItemValidationsAndReviewsTask(member, this.itemValidationService, { itemId });
   }
   createUpdateItemValidationReviewTask(
     member: Member,
@@ -100,12 +100,12 @@ export class TaskManager {
       itemValidationId,
     });
   }
-  createToggleEnabledForItemValidationProcessTask(
+  createSetEnabledForItemValidationProcessTask(
     member: Member,
     id: string,
     data: SetEnabledForItemValidationProcessTaskInput,
-  ): ToggleEnabledForItemValidationProcessTask {
-    return new ToggleEnabledForItemValidationProcessTask(member, this.itemValidationService, {
+  ): SetEnabledForItemValidationProcessTask {
+    return new SetEnabledForItemValidationProcessTask(member, this.itemValidationService, {
       id,
       enabled: data.enabled,
     });

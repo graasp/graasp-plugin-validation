@@ -33,7 +33,7 @@ export class ItemValidationService {
       [['iv', 'id'], ['itemValidationId']],
       [['ivr', 'status_id'], ['reviewStatusId']],
       [['ivr', 'reason'], ['reviewReason']],
-      [['iv', 'created_at'], ['CreatedAt']],
+      [['iv', 'created_at'], ['createdAt']],
     ].map((c) =>
       sql.join(
         c.map((cwa) => sql.identifier(cwa)),
@@ -101,7 +101,7 @@ export class ItemValidationService {
   /**
    * Get validation state of given item
    * Only return the latest iV entry joined with iVR
-   * @param itemId id of the item being checked
+   * @param {string} itemId id of the item being checked
    */
   async getLastItemValidationAndReviews(
     itemId: string,
@@ -125,7 +125,7 @@ export class ItemValidationService {
 
   /**
    * Get item validation groups of given iVId
-   * @param iVId id of the item being checked
+   * @param {string} iVId id of the item being checked
    */
   async getItemValidationGroups(
     iVId: string,
@@ -161,7 +161,7 @@ export class ItemValidationService {
 
   /**
    * Create an entry for the validation attempt in item-validation
-   * @param itemId id of the item being validated
+   * @param {string} itemId id of the item being validated
    */
   async createItemValidation(itemId: string, transactionHandler: TrxHandler): Promise<string> {
     return transactionHandler
@@ -179,8 +179,10 @@ export class ItemValidationService {
 
   /**
    * Create an entry for the automatic validation process in item-validation-group
-   * @param itemId id of the item being validated
-   * @param item-validation-id
+   * @param {string} itemId id of the item being validated
+   * @param {string} iVId id of the entry in item-validation
+   * @param {string} iVPId id of the item-validation-process
+   * @param {string} statusId id of the status in item-validation-status
    */
   async createItemValidationGroup(
     itemId: string,
@@ -275,7 +277,7 @@ export class ItemValidationService {
   /**
    * Toggle the enabled field of an item validation process
    * @param id process id
-   * @param {boolean}
+   * @param {boolean} value the value for enabled field
    */
   async setEnabledForItemValidationProcess(
     id: string,

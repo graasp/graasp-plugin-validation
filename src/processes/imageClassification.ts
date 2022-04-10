@@ -31,7 +31,8 @@ export const classifyImage = async (classifierApi: string, filePath: string) => 
   )) as NudeNetImageClassifierResponse;
   const prediction = response?.prediction?.image;
   if (!prediction) throw new FailedImageClassificationRequestError('Invalid Response');
-  else if (prediction.unsafe > IMAGE_CLASSIFIER_PREDICTION_THRESHOLD)
+  else if (prediction.unsafe > IMAGE_CLASSIFIER_PREDICTION_THRESHOLD) {
     return ItemValidationStatuses.Failure;
+  }
   return ItemValidationStatuses.Success;
 };

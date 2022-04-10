@@ -77,7 +77,7 @@ export class ItemValidationError extends GraaspValidationError {
       {
         code: 'GPVERR005',
         statusCode: StatusCodes.BAD_REQUEST,
-        message: 'An error occurs during validating item',
+        message: 'An error occurs while validating the item',
       },
       data,
     );

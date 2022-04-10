@@ -70,7 +70,7 @@ export const handleProcesses = async (
       return status;
       break;
     default:
-      throw new ProcessNotFoundError();
+      throw new ProcessNotFoundError(process?.name);
       break;
   }
   return '';

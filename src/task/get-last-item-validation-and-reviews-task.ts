@@ -7,10 +7,10 @@ import { ItemValidationAndReview } from '../types';
 
 type InputType = { itemId: string };
 
-export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemValidationAndReview> {
+export class GetLastItemValidationsAndReviewsTask extends BaseValidationTask<ItemValidationAndReview> {
   input: InputType;
   get name(): string {
-    return GetItemValidationsAndReviewsTask.name;
+    return GetLastItemValidationsAndReviewsTask.name;
   }
 
   constructor(member: Member, validationService: ItemValidationService, input: InputType) {

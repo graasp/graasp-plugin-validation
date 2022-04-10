@@ -125,16 +125,11 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
       const subItems = await this.itemService.getChildren(item, handler);
       await Promise.all(
         subItems.map(async (subitem) => {
-          await this.validateItem(
-            subitem,
-            iVId,
-            enabledProcesses,
-            iVStatuses,
-            handler,
-            log,
-          ).catch((error) => {
-            throw new ItemValidationError(error);
-          });
+          await this.validateItem(subitem, iVId, enabledProcesses, iVStatuses, handler, log).catch(
+            (error) => {
+              throw new ItemValidationError(error);
+            },
+          );
         }),
       );
     }
@@ -155,18 +150,13 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     // get item
     const item = await this.itemService.get(itemId, handler);
 
-    await this.validateItem(
-      item,
-      iVId,
-      enabledProcesses,
-      iVStatuses,
-      handler,
-      log,
-    ).catch((error) => {
-      log.error(error);
-      // if error occurs, we would like a manual review on the item
-      this.needReview = true;
-    });
+    await this.validateItem(item, iVId, enabledProcesses, iVStatuses, handler, log).catch(
+      (error) => {
+        log.error(error);
+        // if error occurs, we would like a manual review on the item
+        this.needReview = true;
+      },
+    );
 
     // create entry for review
     const iVRStatuses = await this.validationService.getItemValidationReviewStatuses(handler);

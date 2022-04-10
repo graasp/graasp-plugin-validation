@@ -24,7 +24,6 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   const itemValidationService = new ItemValidationService();
   const taskManager = new TaskManager(itemValidationService);
 
-  // classifierApi is the host api of the container running the image classifier
   const { serviceMethod, serviceOptions, classifierApi } = options;
 
   const serviceItemType =
@@ -110,7 +109,7 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
     '/validations/process/:id/enabled',
     { schema: itemValidationProcess },
     async ({ member, params: { id }, body: data, log }) => {
-      const task = taskManager.createToggleEnabledForItemValidationProcessTask(member, id, data);
+      const task = taskManager.createSetEnabledForItemValidationProcessTask(member, id, data);
       return runner.runSingle(task, log);
     },
   );

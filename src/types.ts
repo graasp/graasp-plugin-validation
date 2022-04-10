@@ -5,6 +5,7 @@ import {
 } from 'graasp-plugin-file';
 
 export interface GraaspPluginValidationOptions {
+  // classifierApi is the host api of the container running the image classifier
   classifierApi: string;
   serviceMethod: ServiceMethod;
   serviceOptions: { s3: GraaspS3FileItemOptions; local: GraaspLocalFileItemOptions };

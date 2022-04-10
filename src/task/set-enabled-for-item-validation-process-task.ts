@@ -7,12 +7,12 @@ import { ItemValidationProcess } from '../types';
 
 type InputType = { id: string; enabled: boolean };
 
-export class ToggleEnabledForItemValidationProcessTask extends BaseValidationTask<ItemValidationProcess> {
+export class SetEnabledForItemValidationProcessTask extends BaseValidationTask<ItemValidationProcess> {
   input: InputType;
   reviewer: Member;
 
   get name(): string {
-    return ToggleEnabledForItemValidationProcessTask.name;
+    return SetEnabledForItemValidationProcessTask.name;
   }
 
   constructor(member: Member, validationService: ItemValidationService, input: InputType) {
