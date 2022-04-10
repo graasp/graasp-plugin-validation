@@ -7,10 +7,10 @@ import { ItemValidationAndReview } from '../types';
 
 type InputType = { itemId: string };
 
-export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemValidationAndReview[]> {
+export class GetLastItemValidationsAndReviewsTask extends BaseValidationTask<ItemValidationAndReview> {
   input: InputType;
   get name(): string {
-    return GetItemValidationsAndReviewsTask.name;
+    return GetLastItemValidationsAndReviewsTask.name;
   }
 
   constructor(member: Member, validationService: ItemValidationService, input: InputType) {
@@ -22,13 +22,13 @@ export class GetItemValidationsAndReviewsTask extends BaseValidationTask<ItemVal
     this.status = 'RUNNING';
     const { itemId } = this.input;
 
-    // Add record of this validation process
-    const validationRecords = await this.validationService.getItemValidationAndReviews(
+    // Get record of this validation process
+    const validationRecord = await this.validationService.getLastItemValidationAndReviews(
       itemId,
       handler,
     );
 
     this.status = 'OK';
-    this._result = validationRecords;
+    this._result = validationRecord;
   }
 }

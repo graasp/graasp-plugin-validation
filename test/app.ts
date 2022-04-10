@@ -2,10 +2,13 @@ import fastify, { FastifyPluginAsync } from 'fastify';
 import { ItemService } from 'graasp';
 import { TaskRunner } from 'graasp-test';
 import common from './common';
+import { GraaspPluginValidationOptions } from '../src/types';
+import { DEFAULT_OPTIONS } from './constants';
 
 type props = {
   runner: TaskRunner;
-  plugin: FastifyPluginAsync;
+  options?: GraaspPluginValidationOptions;
+  plugin: FastifyPluginAsync<GraaspPluginValidationOptions>;
   itemService: ItemService;
 };
 
@@ -27,7 +30,7 @@ const build = async ({ plugin, runner, itemService }: props) => {
   });
   app.decorate('taskRunner', runner);
 
-  await app.register(plugin, {});
+  await app.register(plugin, DEFAULT_OPTIONS);
 
   return app;
 };

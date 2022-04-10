@@ -1,29 +1,34 @@
-import { ItemService, Member } from 'graasp';
+import { Actor, ItemService, Member, TaskRunner } from 'graasp';
 import { ItemValidationService } from './db-service';
-import { ValidationTaskManager } from './interface/validation-task-manager';
-import { DetectBadWordsTask } from './task/detect-bad-words-task';
+import { CreateItemValidationTask } from './task/create-item-validation-task';
 import { GetItemValidationStatusesTask } from './task/get-item-validation-statuses-task';
 import { GetValidationReviewsTask } from './task/get-validation-reviews-task';
-import { GetItemValidationsAndReviewsTask } from './task/get-item-validation-and-reviews-task';
+import { GetLastItemValidationsAndReviewsTask } from './task/get-last-item-validation-and-reviews-task';
 import { UpdateItemValidationReviewTask } from './task/update-validation-review-task';
-import { ItemValidationReview } from './types';
 import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
+import { GetItemValidationGroupsTask } from './task/get-item-validation-groups-task';
+import { SetEnabledForItemValidationProcessTask } from './task/set-enabled-for-item-validation-process-task';
+import { FileTaskManager } from 'graasp-plugin-file';
+import {
+  SetEnabledForItemValidationProcessTaskInput,
+  UpdateItemValidationReviewTaskInput,
+} from './types';
 
-export class TaskManager implements ValidationTaskManager {
+export class TaskManager {
   private itemValidationService: ItemValidationService;
 
   constructor(validationService: ItemValidationService) {
     this.itemValidationService = validationService;
   }
 
-  getDetectBadWordsTaskName(): string {
-    return DetectBadWordsTask.name;
+  getCreateItemValidationTaskName(): string {
+    return CreateItemValidationTask.name;
   }
   getGetItemValidationReviewsTaskName(): string {
     return GetValidationReviewsTask.name;
   }
   getGetItemValidationAndReviewsTaskName(): string {
-    return GetItemValidationsAndReviewsTask.name;
+    return GetLastItemValidationsAndReviewsTask.name;
   }
   getUpdateItemValidationReviewTaskName(): string {
     return GetValidationReviewsTask.name;
@@ -32,15 +37,34 @@ export class TaskManager implements ValidationTaskManager {
     return GetItemValidationStatusesTask.name;
   }
   getGetItemValidationReviewStatusesTaskName(): string {
-    return this.getGetItemValidationReviewStatusesTaskName.name;
+    return GetItemValidationReviewStatusesTask.name;
+  }
+  getGetItemValidationGroupsTaskName(): string {
+    return GetItemValidationGroupsTask.name;
+  }
+  getSetEnabledForItemValidationProcessTaskName(): string {
+    return SetEnabledForItemValidationProcessTask.name;
   }
 
-  createDetectBadWordsTask(
+  createCreateItemValidationTask(
     member: Member,
     itemService: ItemService,
+    fTM: FileTaskManager,
+    runner: TaskRunner<Actor>,
+    serviceItemType: string,
+    classifierApi: string,
     itemId: string,
-  ): DetectBadWordsTask {
-    return new DetectBadWordsTask(member, this.itemValidationService, itemService, { itemId });
+  ): CreateItemValidationTask {
+    return new CreateItemValidationTask(
+      member,
+      this.itemValidationService,
+      itemService,
+      fTM,
+      runner,
+      serviceItemType,
+      classifierApi,
+      { itemId },
+    );
   }
   createGetItemValidationReviewsTask(member: Member): GetValidationReviewsTask {
     return new GetValidationReviewsTask(member, this.itemValidationService);
@@ -48,13 +72,13 @@ export class TaskManager implements ValidationTaskManager {
   createGetItemValidationAndReviewsTask(
     member: Member,
     itemId: string,
-  ): GetItemValidationsAndReviewsTask {
-    return new GetItemValidationsAndReviewsTask(member, this.itemValidationService, { itemId });
+  ): GetLastItemValidationsAndReviewsTask {
+    return new GetLastItemValidationsAndReviewsTask(member, this.itemValidationService, { itemId });
   }
   createUpdateItemValidationReviewTask(
     member: Member,
     id: string,
-    data: Partial<ItemValidationReview>,
+    data: UpdateItemValidationReviewTaskInput,
   ): UpdateItemValidationReviewTask {
     return new UpdateItemValidationReviewTask(member, this.itemValidationService, {
       id,
@@ -67,5 +91,23 @@ export class TaskManager implements ValidationTaskManager {
   }
   createGetItemValidationReviewStatusesTask(member: Member): GetItemValidationReviewStatusesTask {
     return new GetItemValidationReviewStatusesTask(member, this.itemValidationService);
+  }
+  createGetItemValidationGroupsTask(
+    member: Member,
+    itemValidationId: string,
+  ): GetItemValidationGroupsTask {
+    return new GetItemValidationGroupsTask(member, this.itemValidationService, {
+      itemValidationId,
+    });
+  }
+  createSetEnabledForItemValidationProcessTask(
+    member: Member,
+    id: string,
+    data: SetEnabledForItemValidationProcessTaskInput,
+  ): SetEnabledForItemValidationProcessTask {
+    return new SetEnabledForItemValidationProcessTask(member, this.itemValidationService, {
+      id,
+      enabled: data.enabled,
+    });
   }
 }

@@ -35,3 +35,28 @@ export const itemValidationReview = {
   required: ['id'],
   additionalProperties: false,
 };
+
+export const itemValidationGroup = {
+  params: {
+    itemValidationId: {
+      $ref: 'http://graasp.org/#/definitions/uuid',
+    },
+  },
+  required: ['itemValidationId'],
+  additionalProperties: false,
+};
+
+export const itemValidationProcess = {
+  params: {
+    id: {
+      $ref: 'http://graasp.org/#/definitions/uuid',
+    },
+  },
+  body: {
+    enabled: {
+      type: 'boolean',
+    },
+  },
+  required: ['id'],
+  additionalProperties: false,
+};

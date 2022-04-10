@@ -1,7 +1,11 @@
 export const SUCCESS_MESSAGE = 'Item validation passed.';
 
-export const buildItemValidationFailMessage = (suspiciousFields: string[]) =>
-  `Item validation failed. The item may contain inappropriate words in ${suspiciousFields.join(', ')}`;
+export const TMP_FOLDER_PATH = './tmp';
+
+export const IMAGE_FILE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.jfif', '.pjpeg', '.pjp'];
+
+export const SUCCESS_RESULT = 'success';
+export const FAILURE_RESULT = 'Automatic checking failed. Waiting for manual review.';
 
 export enum ItemValidationStatuses {
   Success = 'success',
@@ -15,14 +19,19 @@ export enum ItemValidationReviewStatuses {
   Pending = 'pending',
 }
 
-export const ItemValidationProcesses = {
-  BadWordsDetection: {
-    name: 'bad-words-detection',
-  },
-  AggressiveAndHateSpeech: {
-    name: 'aggressive-or-hate-speech-detection',
-  },
-  ImageChecking: {
-    name: 'image-checking',
-  },
-};
+export enum ItemValidationProcesses {
+  BadWordsDetection = 'bad-words-detection',
+  AggressiveAndHateSpeech = 'aggressive-langauge-classification',
+  ImageChecking = 'image-classification',
+}
+
+export enum ITEM_TYPE {
+  LINK = 'embeddedLink',
+  APP = 'app',
+  DOCUMENT = 'document',
+  FOLDER = 'folder',
+  S3FILE = 's3File',
+  LOCALFILE = 'file',
+}
+
+export const IMAGE_CLASSIFIER_PREDICTION_THRESHOLD = 0.3;

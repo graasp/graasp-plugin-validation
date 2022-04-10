@@ -4,6 +4,7 @@ import { DatabaseTransactionHandler, Member } from 'graasp';
 import { ItemValidationService } from '../db-service';
 import { BaseValidationTask } from './base-validation-task';
 import { ItemValidationReview } from '../types';
+import { getStatusIdByName } from '../utils';
 
 type InputType = { id: string; status?: string; reason?: string };
 
@@ -27,10 +28,12 @@ export class UpdateItemValidationReviewTask extends BaseValidationTask<ItemValid
     const { id, status, reason } = this.input;
     const reviewerId = this.reviewer.id;
 
+    const iVRStatuses = await this.validationService.getItemValidationReviewStatuses(handler);
+
     // Update manual record
     const entry = await this.validationService.updateItemValidationReview(
       id,
-      status,
+      getStatusIdByName(iVRStatuses, status),
       reason,
       reviewerId,
       handler,

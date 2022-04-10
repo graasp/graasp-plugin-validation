@@ -1,6 +1,8 @@
 import { Item, ItemMembership, Member } from 'graasp';
+import { ServiceMethod } from 'graasp-plugin-file';
 import { v4 } from 'uuid';
-import { ItemValidation, ItemValidationStatus } from '../src/types';
+import { ItemValidationProcesses, ITEM_TYPE } from '../src/constants';
+import { ItemValidationGroup, ItemValidationStatus } from '../src/types';
 
 export const buildMember = (): Partial<Member> => ({
   id: v4(),
@@ -39,25 +41,53 @@ export const buildItem = (): Item => {
   };
 };
 
+export const DEFAULT_OPTIONS = {
+  classifierApi: 'localhost',
+  serviceMethod: ServiceMethod.LOCAL,
+  serviceOptions: {
+    s3: {
+      s3Region: 's3Region',
+      s3Bucket: 's3Bucket',
+      s3AccessKeyId: 's3AccessKeyId',
+      s3SecretAccessKey: 's3SecretAccessKey',
+    },
+    local: {
+      storageRootPath: 'storageRootPath',
+    },
+  },
+};
+
 export const BAD_ITEM = {
   id: 'id-bad',
   name: 'normal name',
   description: 'Shit!',
-  type: 'folder',
+  type: ITEM_TYPE.APP,
 };
 
 export const GOOD_ITEM = {
   id: 'id-good',
   name: 'normal name',
   description: 'Some random description',
-  type: 'folder',
+  type: ITEM_TYPE.DOCUMENT,
 };
 
-export const SAMPLE_VALIDATION_PROCESS = {
-  id: 'process-id-1',
-  name: 'detect-bad-words',
-  description: '',
+export const IMAGE_ITEM = {
+  id: 'id-image',
+  name: 'normal name',
+  description: 'Some random description',
+  type: ITEM_TYPE.LOCALFILE,
 };
+
+export const SAMPLE_VALIDATION_PROCESS = [
+  {
+    id: 'process-id-1',
+    name: ItemValidationProcesses.BadWordsDetection,
+  },
+  {
+    id: 'process-id-2',
+    name: ItemValidationProcesses.ImageChecking,
+  }
+];
 
 export const ITEM_VALIDATION_REVIEWS = [
   {
@@ -94,12 +124,12 @@ export const ITEM_VALIDATIONS_STATUSES = [
   },
 ];
 
-export const itemValidationEntry: ItemValidation = {
+export const itemValidationGroupEntry: ItemValidationGroup = {
   id: 'id',
   itemId: 'item-id',
-  itemValidationProcessId: 'process-id',
+  itemValidationId: 'iv-id-1',
+  processId: 'process-id',
   statusId: 'status-id',
-  status: '',
   result: '',
   updatedAt: '',
   createdAt: '',
@@ -115,3 +145,16 @@ export const MOCK_STATUSES: ItemValidationStatus[] = [
     name: 'name-2',
   },
 ];
+
+export const IVStauses = [
+  {
+    id: 'id-1',
+    name: 'status-1',
+  },
+  {
+    id: 'id-2',
+    name: 'status-2'
+  }
+];
+
+export const MOCK_CLASSIFIER_API = 'localhost';

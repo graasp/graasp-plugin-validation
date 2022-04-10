@@ -1,3 +1,25 @@
+import {
+  GraaspLocalFileItemOptions,
+  GraaspS3FileItemOptions,
+  ServiceMethod,
+} from 'graasp-plugin-file';
+
+export interface GraaspPluginValidationOptions {
+  // classifierApi is the host api of the container running the image classifier
+  classifierApi: string;
+  serviceMethod: ServiceMethod;
+  serviceOptions: { s3: GraaspS3FileItemOptions; local: GraaspLocalFileItemOptions };
+}
+
+export type SetEnabledForItemValidationProcessTaskInput = {
+  enabled: boolean;
+};
+
+export type UpdateItemValidationReviewTaskInput = {
+  status?: string;
+  reason?: string;
+};
+
 export type contentForValidation = {
   name: string;
   value: string;
@@ -6,9 +28,15 @@ export type contentForValidation = {
 export type ItemValidation = {
   id: string;
   itemId: string;
-  itemValidationProcessId: string;
+  createdAt: string;
+};
+
+export type ItemValidationGroup = {
+  id: string;
+  itemId: string;
+  itemValidationId: string;
+  processId: string;
   statusId: string;
-  status: string;
   result: string;
   updatedAt: string;
   createdAt: string;
@@ -19,7 +47,6 @@ export type ItemValidationReview = {
   itemValidationId: string;
   reviewerId: string;
   statusId: string;
-  status: string;
   reason: string;
   updatedAt: string;
   createdAt: string;
@@ -41,12 +68,10 @@ export type FullValidationRecord = {
 };
 
 export type ItemValidationAndReview = {
-  validationStatusId: string;
+  itemValidationId: string;
   reviewStatusId: string;
-  validationResult: string;
-  reviewResult: string;
-  validationUpdatedAt: string;
-  reviewUpdatedAt: string;
+  reviewReason: string;
+  createdAt: string;
 };
 
 export type ItemValidationStatus = {
@@ -57,4 +82,13 @@ export type ItemValidationStatus = {
 export type ItemValidationReviewStatus = {
   id: string;
   name: string;
+};
+
+export type NudeNetImageClassifierResponse = {
+  prediction?: {
+    image?: {
+      unsafe: number;
+      safe: number;
+    };
+  };
 };

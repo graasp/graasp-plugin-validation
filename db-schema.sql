@@ -2,14 +2,17 @@
 CREATE TABLE IF NOT EXISTS item_validation_process (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   description VARCHAR(500),
-  name VARCHAR(100) NOT NULL 
+  name VARCHAR(100) NOT NULL,
+  enabled BOOLEAN NOT NULL
 );
 
-INSERT INTO item_validation_process (name, description)
-VALUES ('bad-words-detection', 'check all text fields for bad words'),
-  ('aggressive-or-hate-speech-detection', 'automatically classify the description if it is considered aggressive or hate speech');
+-- insert initial processes
+INSERT INTO item_validation_process (name, description, enabled)
+VALUES ('bad-words-detection', 'check all text fields for bad words', TRUE),
+  ('aggressive-langauge-classification', 'automatically classify the description if it is considered aggressive or hate speech', FALSE),
+  ('image-classification', 'automatically classify image if it contains nudify or not', FALSE);
 
--- create tables for validation status
+-- create tables for validation and review statuses
 CREATE TABLE IF NOT EXISTS item_validation_status (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name VARCHAR(50) NOT NULL
@@ -32,13 +35,21 @@ VALUES ('pending'),
 
 
 -- create table for automatic validation records
--- one record for each validation process
+-- one record for each validation attempt
 CREATE TABLE IF NOT EXISTS item_validation (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   item_id UUID NOT NULL REFERENCES item("id") ON DELETE CASCADE,
+  created_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
+);
+
+-- one record for each process
+CREATE TABLE IF NOT EXISTS item_validation_group (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  item_id UUID NOT NULL REFERENCES item("id") ON DELETE CASCADE,
+  item_validation_id UUID NOT NULL REFERENCES item_validation("id") ON DELETE CASCADE,
   item_validation_process_id UUID NOT NULL REFERENCES item_validation_process("id") ON DELETE CASCADE,
   status_id UUID NOT NULL REFERENCES item_validation_status("id") ON DELETE CASCADE,
-  result VARCHAR(100),
+  result VARCHAR(50),
   updated_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
   created_at timestamp NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc')
 );
