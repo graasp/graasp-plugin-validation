@@ -91,6 +91,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
         this.actor,
         this.runner,
         this.classifierApi,
+        log,
       ).catch((error) => {
         // log the error
         log.error(error);
