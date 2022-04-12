@@ -13,6 +13,7 @@ import { buildStoragePath, downloadFile, stripHtml } from '../utils';
 import { checkBadWords } from './badWordsDetection';
 import { classifyImage } from './imageClassification';
 import { InvalidFileItemError, ProcessNotFoundError } from '../errors';
+import { FastifyLoggerInstance } from 'fastify';
 
 export const handleProcesses = async (
   process: ItemValidationProcess,
@@ -21,6 +22,7 @@ export const handleProcesses = async (
   member: Member,
   runner: TaskRunner<Actor>,
   classifierApi: string,
+  log: FastifyLoggerInstance,
 ): Promise<string> => {
   switch (process.name) {
     case ItemValidationProcesses.BadWordsDetection:
@@ -31,7 +33,6 @@ export const handleProcesses = async (
       return suspiciousFields.length > 0
         ? ItemValidationStatuses.Failure
         : ItemValidationStatuses.Success;
-      break;
     case ItemValidationProcesses.ImageChecking:
       let filepath = '';
       let mimetype = '';
@@ -66,12 +67,12 @@ export const handleProcesses = async (
         member,
         runner,
       )) as string;
-      const status = await classifyImage(classifierApi, filePath);
+      const status = await classifyImage(classifierApi, filePath).catch((error) => {
+        log.error(error);
+        return ItemValidationStatuses.Failure;
+      });
       return status;
-      break;
     default:
       throw new ProcessNotFoundError(process?.name);
-      break;
   }
-  return '';
 };
