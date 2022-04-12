@@ -13,8 +13,7 @@ import {
   status,
 } from './schemas';
 import { GraaspPluginValidationOptions } from './types';
-import { FileTaskManager, ServiceMethod } from 'graasp-plugin-file';
-import { FILE_ITEM_TYPES } from 'graasp-plugin-file-item';
+import { FileTaskManager } from 'graasp-plugin-file';
 
 const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify, options) => {
   const {
@@ -25,9 +24,6 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   const taskManager = new TaskManager(itemValidationService);
 
   const { serviceMethod, serviceOptions, classifierApi } = options;
-
-  const serviceItemType =
-    serviceMethod === ServiceMethod.S3 ? FILE_ITEM_TYPES.S3 : FILE_ITEM_TYPES.LOCAL;
 
   const fTM = new FileTaskManager(serviceOptions, serviceMethod);
 
@@ -82,7 +78,7 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
         iS,
         fTM,
         runner,
-        serviceItemType,
+        serviceMethod,
         classifierApi,
         itemId,
       );

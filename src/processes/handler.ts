@@ -1,6 +1,5 @@
 import { Actor, Item, Member, TaskRunner } from 'graasp';
-import { FileTaskManager, LocalFileItemExtra, S3FileItemExtra } from 'graasp-plugin-file';
-import { FILE_ITEM_TYPES } from 'graasp-plugin-file-item';
+import { FileTaskManager, LocalFileItemExtra, S3FileItemExtra, ServiceMethod } from 'graasp-plugin-file';
 import path from 'path';
 import mime from 'mime-types';
 import {
@@ -37,7 +36,7 @@ export const handleProcesses = async (
       let filepath = '';
       let mimetype = '';
       // check for service type and assign filepath, mimetype respectively
-      if (item?.type === FILE_ITEM_TYPES.S3) {
+      if (item?.type === ServiceMethod.S3) {
         const s3Extra = item?.extra as S3FileItemExtra;
         filepath = s3Extra?.s3File?.path;
         mimetype = s3Extra?.s3File?.mimetype;
