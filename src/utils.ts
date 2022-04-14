@@ -30,5 +30,5 @@ export const downloadFile = async (
 
   // if file not found, an error will be thrown by this line
   const fileStream = (await runner.runSingle(task)) as ReadStream;
-  return fileStream.path;
+  return fileStream.path as string;
 };

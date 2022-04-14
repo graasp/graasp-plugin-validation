@@ -29,6 +29,8 @@ const member = buildMember() as Member;
 const fTM = new FileTaskManager(DEFAULT_OPTIONS.serviceOptions, DEFAULT_OPTIONS.serviceMethod);
 const runner = new Runner();
 
+const fileStorage = './tmp';
+
 describe('Run detect bad words process', () => {
   const iVP = [SAMPLE_VALIDATION_PROCESS[0]];
   const iVId = 'item-validation-id-1';
@@ -61,6 +63,7 @@ describe('Run detect bad words process', () => {
       runner,
       ITEM_TYPE.LOCALFILE,
       MOCK_CLASSIFIER_API,
+      fileStorage,
       { itemId: input },
     );
     jest.spyOn(itemService, 'get').mockImplementation(async () => item as Item);
@@ -79,6 +82,7 @@ describe('Run detect bad words process', () => {
       runner,
       ITEM_TYPE.LOCALFILE,
       MOCK_CLASSIFIER_API,
+      fileStorage,
       { itemId: input },
     );
     jest.spyOn(itemService, 'get').mockImplementation(async () => item as Item);

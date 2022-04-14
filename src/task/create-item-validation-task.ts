@@ -27,6 +27,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
   runner: TaskRunner<Actor>;
   serviceItemType: string;
   classifierApi: string;
+  fileStorage: string;
   // flag to indicate if item needs manual review
   // set as class attribute as it's accessed by different class functions
   needReview: boolean;
@@ -43,6 +44,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     runner: TaskRunner<Actor>,
     serviceItemType: string,
     classifierApi: string,
+    fileStorage: string,
     input: InputType,
   ) {
     super(member, validationService);
@@ -52,6 +54,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     this.runner = runner;
     this.serviceItemType = serviceItemType;
     this.classifierApi = classifierApi;
+    this.fileStorage = fileStorage;
     this.needReview = false;
   }
 
@@ -91,6 +94,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
         this.actor,
         this.runner,
         this.classifierApi,
+        this.fileStorage,
         log,
       ).catch((error) => {
         // log the error

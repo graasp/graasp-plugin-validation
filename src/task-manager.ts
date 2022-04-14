@@ -54,6 +54,7 @@ export class TaskManager {
     serviceItemType: string,
     classifierApi: string,
     itemId: string,
+    fileStorage: string,
   ): CreateItemValidationTask {
     return new CreateItemValidationTask(
       member,
@@ -63,6 +64,7 @@ export class TaskManager {
       runner,
       serviceItemType,
       classifierApi,
+      fileStorage,
       { itemId },
     );
   }

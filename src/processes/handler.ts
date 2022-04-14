@@ -1,5 +1,10 @@
 import { Actor, Item, Member, TaskRunner } from 'graasp';
-import { FileTaskManager, LocalFileItemExtra, S3FileItemExtra, ServiceMethod } from 'graasp-plugin-file';
+import {
+  FileTaskManager,
+  LocalFileItemExtra,
+  S3FileItemExtra,
+  ServiceMethod,
+} from 'graasp-plugin-file';
 import path from 'path';
 import mime from 'mime-types';
 import {
@@ -8,7 +13,7 @@ import {
   ItemValidationStatuses,
 } from '../constants';
 import { ItemValidationProcess } from '../types';
-import { buildStoragePath, downloadFile, stripHtml } from '../utils';
+import { downloadFile, stripHtml } from '../utils';
 import { checkBadWords } from './badWordsDetection';
 import { classifyImage } from './imageClassification';
 import { InvalidFileItemError, ProcessNotFoundError } from '../errors';
@@ -21,6 +26,7 @@ export const handleProcesses = async (
   member: Member,
   runner: TaskRunner<Actor>,
   classifierApi: string,
+  fileStorage: string,
   log: FastifyLoggerInstance,
 ): Promise<string> => {
   switch (process.name) {
@@ -57,15 +63,16 @@ export const handleProcesses = async (
       }
 
       // if file is not an image, return success
-      if (!IMAGE_FILE_EXTENSIONS.includes(ext)) return ItemValidationStatuses.Success;
+      if (!IMAGE_FILE_EXTENSIONS.includes(ext)) {
+        return ItemValidationStatuses.Success;
+      }
 
-      const fileStorage = buildStoragePath(item.id);
-      const filePath = (await downloadFile(
+      const filePath = await downloadFile(
         { filepath, itemId: item?.id, mimetype, fileStorage },
         fTM,
         member,
         runner,
-      )) as string;
+      );
       const status = await classifyImage(classifierApi, filePath).catch((error) => {
         log.error(error);
         return ItemValidationStatuses.Failure;

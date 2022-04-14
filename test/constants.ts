@@ -86,7 +86,7 @@ export const SAMPLE_VALIDATION_PROCESS = [
   {
     id: 'process-id-2',
     name: ItemValidationProcesses.ImageChecking,
-  }
+  },
 ];
 
 export const ITEM_VALIDATION_REVIEWS = [
@@ -153,8 +153,8 @@ export const IVStauses = [
   },
   {
     id: 'id-2',
-    name: 'status-2'
-  }
+    name: 'status-2',
+  },
 ];
 
 export const MOCK_CLASSIFIER_API = 'localhost';
