@@ -11,12 +11,13 @@ import {
   ITEM_TYPE,
   SUCCESS_RESULT,
 } from '../constants';
-import { getStatusIdByName } from '../utils';
+import { buildStoragePath, getStatusIdByName } from '../utils';
 import { handleProcesses } from '../processes/handler';
 import { FileTaskManager } from 'graasp-plugin-file';
 import { ItemValidationProcess, ItemValidationStatus } from '../types';
 import { ItemValidationError, ProcessExecutionError } from '../errors';
 import { FastifyLoggerInstance } from 'fastify';
+import { mkdirSync, rmSync } from 'fs';
 
 type InputType = { itemId: string };
 
@@ -27,7 +28,6 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
   runner: TaskRunner<Actor>;
   serviceItemType: string;
   classifierApi: string;
-  fileStorage: string;
   // flag to indicate if item needs manual review
   // set as class attribute as it's accessed by different class functions
   needReview: boolean;
@@ -44,7 +44,6 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     runner: TaskRunner<Actor>,
     serviceItemType: string,
     classifierApi: string,
-    fileStorage: string,
     input: InputType,
   ) {
     super(member, validationService);
@@ -54,7 +53,6 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     this.runner = runner;
     this.serviceItemType = serviceItemType;
     this.classifierApi = classifierApi;
-    this.fileStorage = fileStorage;
     this.needReview = false;
   }
 
@@ -66,6 +64,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     iVStatuses: ItemValidationStatus[],
     handler: DatabaseTransactionHandler,
     log: FastifyLoggerInstance,
+    fileStorage: string
   ) => {
     const executeProcess = async (process: ItemValidationProcess) => {
       // if item is not of type 'file', skip the image checking
@@ -94,7 +93,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
         this.actor,
         this.runner,
         this.classifierApi,
-        this.fileStorage,
+        fileStorage,
         log,
       ).catch((error) => {
         // log the error
@@ -130,7 +129,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
       const subItems = await this.itemService.getChildren(item, handler);
       await Promise.all(
         subItems.map(async (subitem) => {
-          await this.validateItem(subitem, iVId, enabledProcesses, iVStatuses, handler, log).catch(
+          await this.validateItem(subitem, iVId, enabledProcesses, iVStatuses, handler, log, fileStorage).catch(
             (error) => {
               throw new ItemValidationError(error);
             },
@@ -145,6 +144,13 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
 
     const { itemId } = this.input;
 
+    // create folder to store files
+    const fileStorage = buildStoragePath(itemId);
+    await mkdirSync(fileStorage, {
+      recursive: true,
+    });
+
+
     // create record in item-validation
     const iVId = await this.validationService.createItemValidation(itemId, handler);
 
@@ -155,7 +161,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     // get item
     const item = await this.itemService.get(itemId, handler);
 
-    await this.validateItem(item, iVId, enabledProcesses, iVStatuses, handler, log).catch(
+    await this.validateItem(item, iVId, enabledProcesses, iVStatuses, handler, log, fileStorage).catch(
       (error) => {
         log.error(error);
         // if error occurs, we would like a manual review on the item
@@ -177,5 +183,8 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     this._result = this.needReview ? FAILURE_RESULT : SUCCESS_RESULT;
     // The task status is always 'OK', since the task itself completed successfully
     this.status = 'OK';
+
+    // delete tmp folder
+    rmSync(fileStorage, { recursive: true });
   }
 }

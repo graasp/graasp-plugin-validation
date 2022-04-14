@@ -14,8 +14,6 @@ import {
 } from './schemas';
 import { GraaspPluginValidationOptions } from './types';
 import { FileTaskManager } from 'graasp-plugin-file';
-import { buildStoragePath } from './utils';
-import { mkdirSync, existsSync, rmSync } from 'fs';
 
 const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify, options) => {
   const {
@@ -71,16 +69,10 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   );
 
   // validate item with given itemId in param
-  fastify.route<{ Params: { itemId: string } }>({
-    method: 'POST',
-    url: '/validations/:itemId',
-    schema: itemValidation,
-    handler: async ({ member, params: { itemId }, log }, reply) => {
-      const fileStorage = buildStoragePath(itemId);
-      await mkdirSync(fileStorage, {
-        recursive: true,
-      });
-
+  fastify.post<{ Params: { itemId: string } }>(
+    '/validations/:itemId',
+    { schema: itemValidation },
+    async ({ member, params: { itemId }, log }, reply) => {
       const task = taskManager.createCreateItemValidationTask(
         member,
         iS,
@@ -89,7 +81,6 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
         serviceMethod,
         classifierApi,
         itemId,
-        fileStorage,
       );
       runner.runSingle(task, log);
 
@@ -97,18 +88,7 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
       reply.status(202);
       return itemId;
     },
-
-    onResponse: async ({ params, log }) => {
-      // delete tmp files after endpoint responded
-      const itemId = (params as { itemId: string })?.itemId as string;
-      const fileStorage = buildStoragePath(itemId);
-      if (existsSync(fileStorage)) {
-        rmSync(fileStorage, { recursive: true });
-      } else {
-        log?.error(`${fileStorage} was not found, and was not deleted`);
-      }
-    },
-  });
+  );
 
   // update manual review record of given entry
   fastify.post<{ Params: { id: string }; Body: { status: string; reason: string } }>(
