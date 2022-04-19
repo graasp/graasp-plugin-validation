@@ -1,4 +1,5 @@
 import fs from 'fs';
+import fetch from 'node-fetch';
 import { IMAGE_CLASSIFIER_PREDICTION_THRESHOLD, ItemValidationStatuses } from '../constants';
 import { FailedImageClassificationRequestError } from '../errors';
 import { NudeNetImageClassifierResponse } from '../types';
