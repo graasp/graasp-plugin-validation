@@ -1,5 +1,5 @@
 import fs from 'fs';
-import fetch from 'node-fetch';
+import axios from 'axios';
 import { IMAGE_CLASSIFIER_PREDICTION_THRESHOLD, ItemValidationStatuses } from '../constants';
 import { FailedImageClassificationRequestError } from '../errors';
 import { NudeNetImageClassifierResponse } from '../types';
@@ -8,19 +8,17 @@ export const sendRequestToClassifier = async (
   classifierApi: string,
   encodedImage: string,
 ): Promise<NudeNetImageClassifierResponse> => {
-  const data = fetch(classifierApi, {
-    method: 'POST',
-    body: JSON.stringify({ image: encodedImage }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new FailedImageClassificationRequestError(response.statusText);
-      }
-      return response;
+  const data = { image: encodedImage };
+  const response = await axios
+    .post(classifierApi, {
+      data,
     })
-    .then((response) => response.json());
-
-  return data;
+    .then(({ data }) => data)
+    .catch((error) => {
+      console.log(error);
+      throw new FailedImageClassificationRequestError(error);
+    });
+  return response;
 };
 
 export const classifyImage = async (
