@@ -23,10 +23,8 @@ export class GetLastItemValidationsAndReviewsTask extends BaseValidationTask<Ite
     const { itemId } = this.input;
 
     // Get record of this validation process
-    const validationRecord = await this.validationService.getLastItemValidationAndReviews(
-      itemId,
-      handler,
-    ) || {};
+    const validationRecord =
+      (await this.validationService.getLastItemValidationAndReviews(itemId, handler)) || {};
 
     this.status = 'OK';
     this._result = validationRecord;
