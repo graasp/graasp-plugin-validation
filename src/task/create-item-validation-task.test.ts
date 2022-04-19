@@ -29,7 +29,6 @@ const member = buildMember() as Member;
 const fTM = new FileTaskManager(DEFAULT_OPTIONS.serviceOptions, DEFAULT_OPTIONS.serviceMethod);
 const runner = new Runner();
 
-
 describe('Run detect bad words process', () => {
   const iVP = [SAMPLE_VALIDATION_PROCESS[0]];
   const iVId = 'item-validation-id-1';

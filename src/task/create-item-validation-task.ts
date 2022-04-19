@@ -64,7 +64,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     iVStatuses: ItemValidationStatus[],
     handler: DatabaseTransactionHandler,
     log: FastifyLoggerInstance,
-    fileStorage: string
+    fileStorage: string,
   ) => {
     const executeProcess = async (process: ItemValidationProcess) => {
       // if item is not of type 'file', skip the image checking
@@ -129,11 +129,17 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
       const subItems = await this.itemService.getChildren(item, handler);
       await Promise.all(
         subItems.map(async (subitem) => {
-          await this.validateItem(subitem, iVId, enabledProcesses, iVStatuses, handler, log, fileStorage).catch(
-            (error) => {
-              throw new ItemValidationError(error);
-            },
-          );
+          await this.validateItem(
+            subitem,
+            iVId,
+            enabledProcesses,
+            iVStatuses,
+            handler,
+            log,
+            fileStorage,
+          ).catch((error) => {
+            throw new ItemValidationError(error);
+          });
         }),
       );
     }
@@ -150,7 +156,6 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
       recursive: true,
     });
 
-
     // create record in item-validation
     const iVId = await this.validationService.createItemValidation(itemId, handler);
 
@@ -161,13 +166,19 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     // get item
     const item = await this.itemService.get(itemId, handler);
 
-    await this.validateItem(item, iVId, enabledProcesses, iVStatuses, handler, log, fileStorage).catch(
-      (error) => {
-        log.error(error);
-        // if error occurs, we would like a manual review on the item
-        this.needReview = true;
-      },
-    );
+    await this.validateItem(
+      item,
+      iVId,
+      enabledProcesses,
+      iVStatuses,
+      handler,
+      log,
+      fileStorage,
+    ).catch((error) => {
+      log.error(error);
+      // if error occurs, we would like a manual review on the item
+      this.needReview = true;
+    });
 
     // create entry for review
     const iVRStatuses = await this.validationService.getItemValidationReviewStatuses(handler);
