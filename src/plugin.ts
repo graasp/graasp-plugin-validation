@@ -1,9 +1,8 @@
-// global
 import { FastifyPluginAsync } from 'fastify';
 
-// local
+import { FileTaskManager } from 'graasp-plugin-file';
+
 import { ItemValidationService } from './db-service';
-import { TaskManager } from './task-manager';
 import {
   itemValidation,
   itemValidationGroup,
@@ -12,8 +11,8 @@ import {
   itemValidationReviews,
   status,
 } from './schemas';
+import { TaskManager } from './task-manager';
 import { GraaspPluginValidationOptions } from './types';
-import { FileTaskManager } from 'graasp-plugin-file';
 
 const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify, options) => {
   const {
@@ -23,9 +22,9 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
   const itemValidationService = new ItemValidationService();
   const taskManager = new TaskManager(itemValidationService);
 
-  const { serviceMethod, serviceOptions, classifierApi } = options;
+  const { fileItemType, fileConfigurations, classifierApi } = options;
 
-  const fTM = new FileTaskManager(serviceOptions, serviceMethod);
+  const fTM = new FileTaskManager(fileConfigurations, fileItemType);
 
   // get a list of all statuses
   fastify.get('/validations/statuses', { schema: status }, async ({ member, log }) => {
@@ -78,7 +77,7 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
         iS,
         fTM,
         runner,
-        serviceMethod,
+        fileItemType,
         classifierApi,
         itemId,
       );

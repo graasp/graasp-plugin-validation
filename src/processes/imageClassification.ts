@@ -1,5 +1,6 @@
-import fs from 'fs';
 import axios from 'axios';
+import fs from 'fs';
+
 import { IMAGE_CLASSIFIER_PREDICTION_THRESHOLD, ItemValidationStatuses } from '../constants';
 import { FailedImageClassificationRequestError } from '../errors';
 import { NudeNetImageClassifierResponse } from '../types';

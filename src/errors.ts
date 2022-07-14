@@ -1,25 +1,11 @@
-import { GraaspErrorDetails, GraaspError } from 'graasp';
 import { StatusCodes } from 'http-status-codes';
 
-export class GraaspValidationError implements GraaspError {
-  name: string;
-  code: string;
-  message: string;
-  statusCode?: number;
-  data?: unknown;
-  origin: 'plugin' | string;
+import { BaseGraaspError } from '@graasp/sdk';
 
-  constructor({ code, statusCode, message }: GraaspErrorDetails, data?: unknown) {
-    this.name = code;
-    this.code = code;
-    this.message = message;
-    this.statusCode = statusCode;
-    this.data = data;
-    this.origin = 'plugin';
-  }
-}
+import { PLUGIN_NAME } from './constants';
 
-export class InvalidFileItemError extends GraaspValidationError {
+export class InvalidFileItemError extends BaseGraaspError {
+  origin = PLUGIN_NAME;
   constructor(data?: unknown) {
     super(
       {
@@ -32,7 +18,8 @@ export class InvalidFileItemError extends GraaspValidationError {
   }
 }
 
-export class FailedImageClassificationRequestError extends GraaspValidationError {
+export class FailedImageClassificationRequestError extends BaseGraaspError {
+  origin = PLUGIN_NAME;
   constructor(data?: unknown) {
     super(
       {
@@ -45,7 +32,8 @@ export class FailedImageClassificationRequestError extends GraaspValidationError
   }
 }
 
-export class ProcessNotFoundError extends GraaspValidationError {
+export class ProcessNotFoundError extends BaseGraaspError {
+  origin = PLUGIN_NAME;
   constructor(data?: unknown) {
     super(
       {
@@ -58,7 +46,8 @@ export class ProcessNotFoundError extends GraaspValidationError {
   }
 }
 
-export class ProcessExecutionError extends GraaspValidationError {
+export class ProcessExecutionError extends BaseGraaspError {
+  origin = PLUGIN_NAME;
   constructor(process: string, data?: unknown) {
     super(
       {
@@ -71,7 +60,7 @@ export class ProcessExecutionError extends GraaspValidationError {
   }
 }
 
-export class ItemValidationError extends GraaspValidationError {
+export class ItemValidationError extends BaseGraaspError {
   constructor(data?: unknown) {
     super(
       {

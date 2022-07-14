@@ -1,3 +1,5 @@
+export const PLUGIN_NAME = 'graasp-plugin-validation';
+
 export const SUCCESS_MESSAGE = 'Item validation passed.';
 
 export const TMP_FOLDER_PATH = './tmp';
@@ -23,15 +25,6 @@ export enum ItemValidationProcesses {
   BadWordsDetection = 'bad-words-detection',
   AggressiveAndHateSpeech = 'aggressive-langauge-classification',
   ImageChecking = 'image-classification',
-}
-
-export enum ITEM_TYPE {
-  LINK = 'embeddedLink',
-  APP = 'app',
-  DOCUMENT = 'document',
-  FOLDER = 'folder',
-  S3FILE = 's3File',
-  LOCALFILE = 'file',
 }
 
 export const IMAGE_CLASSIFIER_PREDICTION_THRESHOLD = 0.3;

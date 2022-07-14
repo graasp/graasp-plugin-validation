@@ -1,23 +1,32 @@
-// global
-import { Actor, DatabaseTransactionHandler, Item, ItemService, Member, TaskRunner } from 'graasp';
-// local
-import { ItemValidationService } from '../db-service';
-import { BaseValidationTask } from './base-validation-task';
+import { mkdirSync, rmSync } from 'fs';
+
+import { FastifyLoggerInstance } from 'fastify';
+
+import {
+  Actor,
+  DatabaseTransactionHandler,
+  Item,
+  ItemService,
+  ItemType,
+  Member,
+  TaskRunner,
+  TaskStatus,
+} from '@graasp/sdk';
+import { FileTaskManager } from 'graasp-plugin-file';
+
 import {
   FAILURE_RESULT,
   ItemValidationProcesses,
   ItemValidationReviewStatuses,
   ItemValidationStatuses,
-  ITEM_TYPE,
   SUCCESS_RESULT,
 } from '../constants';
-import { buildStoragePath, getStatusIdByName } from '../utils';
-import { handleProcesses } from '../processes/handler';
-import { FileTaskManager } from 'graasp-plugin-file';
-import { ItemValidationProcess, ItemValidationStatus } from '../types';
+import { ItemValidationService } from '../db-service';
 import { ItemValidationError, ProcessExecutionError } from '../errors';
-import { FastifyLoggerInstance } from 'fastify';
-import { mkdirSync, rmSync } from 'fs';
+import { handleProcesses } from '../processes/handler';
+import { ItemValidationProcess, ItemValidationStatus } from '../types';
+import { buildStoragePath, getStatusIdByName } from '../utils';
+import { BaseValidationTask } from './base-validation-task';
 
 type InputType = { itemId: string };
 
@@ -71,8 +80,9 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
       if (
         process?.name === ItemValidationProcesses.ImageChecking &&
         item?.type !== this.serviceItemType
-      )
+      ) {
         return;
+      }
 
       // create pending entry
       const iVGEntry = await this.validationService
@@ -125,7 +135,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     );
 
     // recursively validate subitem
-    if (item?.type === ITEM_TYPE.FOLDER) {
+    if (item?.type === ItemType.FOLDER) {
       const subItems = await this.itemService.getChildren(item, handler);
       await Promise.all(
         subItems.map(async (subitem) => {
@@ -146,7 +156,7 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
   };
 
   async run(handler: DatabaseTransactionHandler, log: FastifyLoggerInstance): Promise<void> {
-    this.status = 'RUNNING';
+    this.status = TaskStatus.RUNNING;
 
     const { itemId } = this.input;
 
@@ -192,8 +202,8 @@ export class CreateItemValidationTask extends BaseValidationTask<string> {
     this._message = 'Item validation task executed.';
     // the result is only used for testing
     this._result = this.needReview ? FAILURE_RESULT : SUCCESS_RESULT;
-    // The task status is always 'OK', since the task itself completed successfully
-    this.status = 'OK';
+    // The task status is always TaskStatus.OK, since the task itself completed successfully
+    this.status = TaskStatus.OK;
 
     // delete tmp folder
     rmSync(fileStorage, { recursive: true });
