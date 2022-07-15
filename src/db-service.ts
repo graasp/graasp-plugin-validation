@@ -98,6 +98,17 @@ export class ItemValidationService {
       .then(({ rows }) => rows.slice());
   }
 
+  // get process list to convert process-id to name
+  async getItemValidationProcesses(transactionHandler: TrxHandler): Promise<ItemValidationProcess[]> {
+    return transactionHandler
+      .query<ItemValidationProcess>(
+        sql`
+        SELECT * FROM item_validation_process
+      `,
+      )
+      .then(({ rows }) => rows.slice());
+  }
+
   /**
    * Get validation state of given item
    * Only return the latest iV entry joined with iVR
