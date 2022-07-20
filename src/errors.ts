@@ -1,11 +1,12 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { BaseGraaspError } from '@graasp/sdk';
+import { ErrorFactory } from '@graasp/sdk';
 
 import { PLUGIN_NAME } from './constants';
 
-export class InvalidFileItemError extends BaseGraaspError {
-  origin = PLUGIN_NAME;
+const GraaspError = ErrorFactory(PLUGIN_NAME);
+
+export class InvalidFileItemError extends GraaspError {
   constructor(data?: unknown) {
     super(
       {
@@ -18,8 +19,7 @@ export class InvalidFileItemError extends BaseGraaspError {
   }
 }
 
-export class FailedImageClassificationRequestError extends BaseGraaspError {
-  origin = PLUGIN_NAME;
+export class FailedImageClassificationRequestError extends GraaspError {
   constructor(data?: unknown) {
     super(
       {
@@ -32,8 +32,7 @@ export class FailedImageClassificationRequestError extends BaseGraaspError {
   }
 }
 
-export class ProcessNotFoundError extends BaseGraaspError {
-  origin = PLUGIN_NAME;
+export class ProcessNotFoundError extends GraaspError {
   constructor(data?: unknown) {
     super(
       {
@@ -46,8 +45,7 @@ export class ProcessNotFoundError extends BaseGraaspError {
   }
 }
 
-export class ProcessExecutionError extends BaseGraaspError {
-  origin = PLUGIN_NAME;
+export class ProcessExecutionError extends GraaspError {
   constructor(process: string, data?: unknown) {
     super(
       {
@@ -60,7 +58,7 @@ export class ProcessExecutionError extends BaseGraaspError {
   }
 }
 
-export class ItemValidationError extends BaseGraaspError {
+export class ItemValidationError extends GraaspError {
   constructor(data?: unknown) {
     super(
       {

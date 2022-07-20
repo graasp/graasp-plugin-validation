@@ -1,6 +1,6 @@
 import { FastifyLoggerInstance } from 'fastify';
 
-import { DatabaseTransactionHandler, Item, ItemService, ItemType, Member, } from '@graasp/sdk';
+import { DatabaseTransactionHandler, Item, ItemService, ItemType, Member } from '@graasp/sdk';
 import { FileTaskManager } from 'graasp-plugin-file';
 import { TaskRunner as Runner } from 'graasp-test';
 

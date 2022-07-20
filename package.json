@@ -34,7 +34,7 @@
     "mime-types": "2.1.35"
   },
   "devDependencies": {
-    "@graasp/sdk": "github:graasp/graasp-utils#15/testUtils",
+    "@graasp/sdk": "github:graasp/graasp-sdk",
     "@trivago/prettier-plugin-sort-imports": "3.2.0",
     "@types/bad-words": "3.0.1",
     "@types/eslint": "^7.2.5",

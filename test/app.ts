@@ -1,6 +1,6 @@
 import fastify, { FastifyPluginAsync } from 'fastify';
 
-import { ItemService, TaskRunner, Actor } from '@graasp/sdk';
+import { Actor, ItemService, TaskRunner } from '@graasp/sdk';
 
 import { GraaspPluginValidationOptions } from '../src/types';
 import common from './common';
