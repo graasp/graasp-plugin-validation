@@ -1,16 +1,16 @@
-// global
 import { FastifyLoggerInstance } from 'fastify';
+
 import {
   Actor,
+  DatabaseTransactionHandler,
+  IndividualResultType,
+  Member,
+  PostHookHandlerType,
+  PreHookHandlerType,
   Task,
   TaskStatus,
-  IndividualResultType,
-  PreHookHandlerType,
-  PostHookHandlerType,
-  DatabaseTransactionHandler,
-} from 'graasp';
-import { Member } from 'graasp';
-// local
+} from '@graasp/sdk';
+
 import { ItemValidationService } from '../db-service';
 
 export abstract class BaseValidationTask<R> implements Task<Actor, R> {
@@ -33,7 +33,7 @@ export abstract class BaseValidationTask<R> implements Task<Actor, R> {
   constructor(member: Member, validationService: ItemValidationService) {
     this.actor = member;
     this.validationService = validationService;
-    this.status = 'NEW';
+    this.status = TaskStatus.NEW;
   }
 
   abstract get name(): string;

@@ -1,13 +1,15 @@
-import { sql, DatabaseTransactionConnection as TrxHandler } from 'slonik';
+import { DatabaseTransactionConnection as TrxHandler, sql } from 'slonik';
+
 import {
   FullValidationRecord,
+  ItemValidationAndReview,
+  ItemValidationGroup,
   ItemValidationProcess,
   ItemValidationReview,
-  ItemValidationAndReview,
-  ItemValidationStatus,
   ItemValidationReviewStatus,
-  ItemValidationGroup,
+  ItemValidationStatus,
 } from './types';
+
 /**
  * Database's first layer of abstraction for content validation
  */

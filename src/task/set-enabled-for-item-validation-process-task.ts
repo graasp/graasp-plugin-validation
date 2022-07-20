@@ -1,9 +1,8 @@
-// global
-import { DatabaseTransactionHandler, Member } from 'graasp';
-// local
+import { DatabaseTransactionHandler, Member, TaskStatus } from '@graasp/sdk';
+
 import { ItemValidationService } from '../db-service';
-import { BaseValidationTask } from './base-validation-task';
 import { ItemValidationProcess } from '../types';
+import { BaseValidationTask } from './base-validation-task';
 
 type InputType = { id: string; enabled: boolean };
 
@@ -22,7 +21,7 @@ export class SetEnabledForItemValidationProcessTask extends BaseValidationTask<I
   }
 
   async run(handler: DatabaseTransactionHandler): Promise<void> {
-    this.status = 'RUNNING';
+    this.status = TaskStatus.RUNNING;
 
     const { id, enabled } = this.input;
 
@@ -33,7 +32,7 @@ export class SetEnabledForItemValidationProcessTask extends BaseValidationTask<I
       handler,
     );
 
-    this.status = 'OK';
+    this.status = TaskStatus.OK;
     this._result = entry;
   }
 }

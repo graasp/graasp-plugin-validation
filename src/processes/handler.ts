@@ -1,23 +1,29 @@
-import { Actor, Item, Member, TaskRunner } from 'graasp';
-import {
-  FileTaskManager,
-  LocalFileItemExtra,
-  S3FileItemExtra,
-  ServiceMethod,
-} from 'graasp-plugin-file';
-import path from 'path';
 import mime from 'mime-types';
+import path from 'path';
+
+import { FastifyLoggerInstance } from 'fastify';
+
+import {
+  Actor,
+  Item,
+  ItemType,
+  LocalFileItemExtra,
+  Member,
+  S3FileItemExtra,
+  TaskRunner,
+} from '@graasp/sdk';
+import { FileTaskManager } from 'graasp-plugin-file';
+
 import {
   IMAGE_FILE_EXTENSIONS,
   ItemValidationProcesses,
   ItemValidationStatuses,
 } from '../constants';
+import { InvalidFileItemError, ProcessNotFoundError } from '../errors';
 import { ItemValidationProcess } from '../types';
 import { downloadFile, stripHtml } from '../utils';
 import { checkBadWords } from './badWordsDetection';
 import { classifyImage } from './imageClassification';
-import { InvalidFileItemError, ProcessNotFoundError } from '../errors';
-import { FastifyLoggerInstance } from 'fastify';
 
 export const handleProcesses = async (
   process: ItemValidationProcess,
@@ -42,7 +48,7 @@ export const handleProcesses = async (
       let filepath = '';
       let mimetype = '';
       // check for service type and assign filepath, mimetype respectively
-      if (item?.type === ServiceMethod.S3) {
+      if (item?.type === ItemType.S3_FILE) {
         const s3Extra = item?.extra as S3FileItemExtra;
         filepath = s3Extra?.s3File?.path;
         mimetype = s3Extra?.s3File?.mimetype;

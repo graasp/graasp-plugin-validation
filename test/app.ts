@@ -1,12 +1,13 @@
 import fastify, { FastifyPluginAsync } from 'fastify';
-import { ItemService } from 'graasp';
-import { TaskRunner } from 'graasp-test';
-import common from './common';
+
+import { Actor, ItemService, TaskRunner } from '@graasp/sdk';
+
 import { GraaspPluginValidationOptions } from '../src/types';
+import common from './common';
 import { DEFAULT_OPTIONS } from './constants';
 
 type props = {
-  runner: TaskRunner;
+  runner: TaskRunner<Actor>;
   options?: GraaspPluginValidationOptions;
   plugin: FastifyPluginAsync<GraaspPluginValidationOptions>;
   itemService: ItemService;

@@ -1,4 +1,5 @@
 import BadWordsFilter from 'bad-words';
+
 import { contentForValidation } from '../types';
 
 export const buildWordList = (badWordsFilter: BadWordsFilter): void => {
@@ -8,7 +9,7 @@ export const buildWordList = (badWordsFilter: BadWordsFilter): void => {
   badWordsFilter.addWords(...frenchBadwordsList);
 };
 
-export const checkBadWords = (documents: contentForValidation[]) => {
+export const checkBadWords = (documents: contentForValidation[]): string[] => {
   const contents = documents?.filter(Boolean);
   const badWordsFilter = new BadWordsFilter();
   buildWordList(badWordsFilter);

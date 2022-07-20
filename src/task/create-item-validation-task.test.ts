@@ -1,23 +1,24 @@
-import { DatabaseTransactionHandler, Member, Item, ItemService } from 'graasp';
+import { FastifyLoggerInstance } from 'fastify';
 
-import { ItemValidationService } from '../db-service';
+import { DatabaseTransactionHandler, Item, ItemService, ItemType, Member } from '@graasp/sdk';
+import { FileTaskManager } from 'graasp-plugin-file';
+import { TaskRunner as Runner } from 'graasp-test';
+
 import {
   BAD_ITEM,
-  buildMember,
   DEFAULT_OPTIONS,
   GOOD_ITEM,
-  itemValidationGroupEntry,
   ITEM_VALIDATION_REVIEWS,
   IVStauses,
   MOCK_CLASSIFIER_API,
   SAMPLE_VALIDATION_PROCESS,
+  buildMember,
+  itemValidationGroupEntry,
 } from '../../test/constants';
-import { CreateItemValidationTask } from './create-item-validation-task';
+import { FAILURE_RESULT, SUCCESS_RESULT } from '../constants';
+import { ItemValidationService } from '../db-service';
 import { ItemValidationReview } from '../types';
-import { FileTaskManager } from 'graasp-plugin-file';
-import { FAILURE_RESULT, ITEM_TYPE, SUCCESS_RESULT } from '../constants';
-import Runner from 'graasp-test/src/tasks/taskRunner';
-import { FastifyLoggerInstance } from 'fastify';
+import { CreateItemValidationTask } from './create-item-validation-task';
 
 const handler = {} as unknown as DatabaseTransactionHandler;
 const log = {} as unknown as FastifyLoggerInstance;
@@ -26,7 +27,7 @@ const validationService = new ItemValidationService();
 const itemService = { get: jest.fn() } as unknown as ItemService;
 
 const member = buildMember() as Member;
-const fTM = new FileTaskManager(DEFAULT_OPTIONS.serviceOptions, DEFAULT_OPTIONS.serviceMethod);
+const fTM = new FileTaskManager(DEFAULT_OPTIONS.fileConfigurations, DEFAULT_OPTIONS.fileItemType);
 const runner = new Runner();
 
 describe('Run detect bad words process', () => {
@@ -59,7 +60,7 @@ describe('Run detect bad words process', () => {
       itemService,
       fTM,
       runner,
-      ITEM_TYPE.LOCALFILE,
+      ItemType.LOCAL_FILE,
       MOCK_CLASSIFIER_API,
       { itemId: input },
     );
@@ -77,7 +78,7 @@ describe('Run detect bad words process', () => {
       itemService,
       fTM,
       runner,
-      ITEM_TYPE.LOCALFILE,
+      ItemType.LOCAL_FILE,
       MOCK_CLASSIFIER_API,
       { itemId: input },
     );

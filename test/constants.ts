@@ -1,7 +1,8 @@
-import { Item, ItemMembership, Member } from 'graasp';
-import { ServiceMethod } from 'graasp-plugin-file';
 import { v4 } from 'uuid';
-import { ItemValidationProcesses, ITEM_TYPE } from '../src/constants';
+
+import { FileItemType, Item, ItemMembership, ItemType, Member } from '@graasp/sdk';
+
+import { ItemValidationProcesses } from '../src/constants';
 import { ItemValidationGroup, ItemValidationStatus } from '../src/types';
 
 export const buildMember = (): Partial<Member> => ({
@@ -43,8 +44,8 @@ export const buildItem = (): Item => {
 
 export const DEFAULT_OPTIONS = {
   classifierApi: 'localhost',
-  serviceMethod: ServiceMethod.LOCAL,
-  serviceOptions: {
+  fileItemType: ItemType.LOCAL_FILE as FileItemType,
+  fileConfigurations: {
     s3: {
       s3Region: 's3Region',
       s3Bucket: 's3Bucket',
@@ -61,21 +62,21 @@ export const BAD_ITEM = {
   id: 'id-bad',
   name: 'normal name',
   description: 'Shit!',
-  type: ITEM_TYPE.APP,
+  type: ItemType.APP,
 };
 
 export const GOOD_ITEM = {
   id: 'id-good',
   name: 'normal name',
   description: 'Some random description',
-  type: ITEM_TYPE.DOCUMENT,
+  type: ItemType.DOCUMENT,
 };
 
 export const IMAGE_ITEM = {
   id: 'id-image',
   name: 'normal name',
   description: 'Some random description',
-  type: ITEM_TYPE.LOCALFILE,
+  type: ItemType.LOCAL_FILE,
 };
 
 export const SAMPLE_VALIDATION_PROCESS = [
