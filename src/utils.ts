@@ -1,5 +1,6 @@
 import { ReadStream } from 'fs';
 import path from 'path';
+import striptags from 'striptags';
 
 import { Actor, Member, TaskRunner } from '@graasp/sdk';
 import { FileTaskManager } from 'graasp-plugin-file';
@@ -7,7 +8,7 @@ import { DownloadFileInputType } from 'graasp-plugin-file/dist/tasks/download-fi
 
 import { ItemValidationStatuses } from './constants';
 
-export const stripHtml = (str: string): string => str?.replace(/<[^>]*>?/gm, '');
+export const stripHtml = (str: string): string => striptags(str);
 
 export const getStatusIdByName = (statuses: any[], name?: string): string => {
   // if no status is supplied, default is pending

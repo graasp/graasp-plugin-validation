@@ -4,9 +4,9 @@ import { ErrorFactory } from '@graasp/sdk';
 
 import { PLUGIN_NAME } from './constants';
 
-const GraaspError = ErrorFactory(PLUGIN_NAME);
+const GraaspValidationError = ErrorFactory(PLUGIN_NAME);
 
-export class InvalidFileItemError extends GraaspError {
+export class InvalidFileItemError extends GraaspValidationError {
   constructor(data?: unknown) {
     super(
       {
@@ -19,7 +19,7 @@ export class InvalidFileItemError extends GraaspError {
   }
 }
 
-export class FailedImageClassificationRequestError extends GraaspError {
+export class FailedImageClassificationRequestError extends GraaspValidationError {
   constructor(data?: unknown) {
     super(
       {
@@ -32,7 +32,7 @@ export class FailedImageClassificationRequestError extends GraaspError {
   }
 }
 
-export class ProcessNotFoundError extends GraaspError {
+export class ProcessNotFoundError extends GraaspValidationError {
   constructor(data?: unknown) {
     super(
       {
@@ -45,7 +45,7 @@ export class ProcessNotFoundError extends GraaspError {
   }
 }
 
-export class ProcessExecutionError extends GraaspError {
+export class ProcessExecutionError extends GraaspValidationError {
   constructor(process: string, data?: unknown) {
     super(
       {
@@ -58,7 +58,7 @@ export class ProcessExecutionError extends GraaspError {
   }
 }
 
-export class ItemValidationError extends GraaspError {
+export class ItemValidationError extends GraaspValidationError {
   constructor(data?: unknown) {
     super(
       {
