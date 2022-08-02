@@ -1,9 +1,8 @@
-// global
-import { DatabaseTransactionHandler, Member } from 'graasp';
-// local
+import { DatabaseTransactionHandler, Member, TaskStatus } from '@graasp/sdk';
+
 import { ItemValidationService } from '../db-service';
-import { BaseValidationTask } from './base-validation-task';
 import { ItemValidationAndReview } from '../types';
+import { BaseValidationTask } from './base-validation-task';
 
 type InputType = { itemId: string };
 
@@ -19,14 +18,14 @@ export class GetLastItemValidationsAndReviewsTask extends BaseValidationTask<Ite
   }
 
   async run(handler: DatabaseTransactionHandler): Promise<void> {
-    this.status = 'RUNNING';
+    this.status = TaskStatus.RUNNING;
     const { itemId } = this.input;
 
     // Get record of this validation process
     const validationRecord =
       (await this.validationService.getLastItemValidationAndReviews(itemId, handler)) || {};
 
-    this.status = 'OK';
+    this.status = TaskStatus.OK;
     this._result = validationRecord;
   }
 }

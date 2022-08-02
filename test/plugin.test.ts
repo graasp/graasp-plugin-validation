@@ -1,16 +1,18 @@
-import { ItemService } from 'graasp';
-import Runner from 'graasp-test/src/tasks/taskRunner';
 import { StatusCodes } from 'http-status-codes';
 import { v4 } from 'uuid';
+
+import { ItemService } from '@graasp/sdk';
+import { TaskRunner as Runner } from 'graasp-test';
+
 import plugin from '../src/plugin';
 import build from './app';
 import {
-  buildItem,
-  itemValidationGroupEntry,
   ITEM_VALIDATIONS_STATUSES,
   ITEM_VALIDATION_REVIEWS,
   MOCK_STATUSES,
   SAMPLE_VALIDATION_PROCESS,
+  buildItem,
+  itemValidationGroupEntry,
 } from './constants';
 
 const runner = new Runner();

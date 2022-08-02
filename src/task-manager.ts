@@ -1,14 +1,15 @@
-import { Actor, ItemService, Member, TaskRunner } from 'graasp';
+import { Actor, FileItemType, ItemService, Member, TaskRunner } from '@graasp/sdk';
+import { FileTaskManager } from 'graasp-plugin-file';
+
 import { ItemValidationService } from './db-service';
 import { CreateItemValidationTask } from './task/create-item-validation-task';
-import { GetItemValidationStatusesTask } from './task/get-item-validation-statuses-task';
-import { GetValidationReviewsTask } from './task/get-validation-reviews-task';
-import { GetLastItemValidationsAndReviewsTask } from './task/get-last-item-validation-and-reviews-task';
-import { UpdateItemValidationReviewTask } from './task/update-validation-review-task';
-import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
 import { GetItemValidationGroupsTask } from './task/get-item-validation-groups-task';
+import { GetItemValidationReviewStatusesTask } from './task/get-item-validation-review-statuses-task';
+import { GetItemValidationStatusesTask } from './task/get-item-validation-statuses-task';
+import { GetLastItemValidationsAndReviewsTask } from './task/get-last-item-validation-and-reviews-task';
+import { GetValidationReviewsTask } from './task/get-validation-reviews-task';
 import { SetEnabledForItemValidationProcessTask } from './task/set-enabled-for-item-validation-process-task';
-import { FileTaskManager } from 'graasp-plugin-file';
+import { UpdateItemValidationReviewTask } from './task/update-validation-review-task';
 import {
   SetEnabledForItemValidationProcessTaskInput,
   UpdateItemValidationReviewTaskInput,
@@ -51,7 +52,7 @@ export class TaskManager {
     itemService: ItemService,
     fTM: FileTaskManager,
     runner: TaskRunner<Actor>,
-    serviceItemType: string,
+    fileItemType: FileItemType,
     classifierApi: string,
     itemId: string,
   ): CreateItemValidationTask {
@@ -61,7 +62,7 @@ export class TaskManager {
       itemService,
       fTM,
       runner,
-      serviceItemType,
+      fileItemType,
       classifierApi,
       { itemId },
     );
