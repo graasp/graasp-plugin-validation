@@ -14,6 +14,7 @@ import {
   SetEnabledForItemValidationProcessTaskInput,
   UpdateItemValidationReviewTaskInput,
 } from './types';
+import { GetItemValidationProcessesTask } from './task/get-item-validation-processes-task';
 
 export class TaskManager {
   private itemValidationService: ItemValidationService;
@@ -39,6 +40,9 @@ export class TaskManager {
   }
   getGetItemValidationReviewStatusesTaskName(): string {
     return GetItemValidationReviewStatusesTask.name;
+  }
+  getGetItemValidationProcessesTaskName(): string {
+    return GetItemValidationProcessesTask.name;
   }
   getGetItemValidationGroupsTaskName(): string {
     return GetItemValidationGroupsTask.name;
@@ -92,6 +96,9 @@ export class TaskManager {
   }
   createGetItemValidationReviewStatusesTask(member: Member): GetItemValidationReviewStatusesTask {
     return new GetItemValidationReviewStatusesTask(member, this.itemValidationService);
+  }
+  createGetItemValidationProcessesTask(member: Member): GetItemValidationProcessesTask {
+    return new GetItemValidationProcessesTask(member, this.itemValidationService);
   }
   createGetItemValidationGroupsTask(
     member: Member,

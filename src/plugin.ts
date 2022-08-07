@@ -37,6 +37,11 @@ const plugin: FastifyPluginAsync<GraaspPluginValidationOptions> = async (fastify
     return runner.runSingle(task, log);
   });
 
+  fastify.get('/validations/processes', { schema: status }, async ({ member, log }) => {
+    const task = taskManager.createGetItemValidationProcessesTask(member);
+    return runner.runSingle(task, log);
+  });
+
   // get all entries need manual review
   fastify.get(
     '/validations/reviews',
