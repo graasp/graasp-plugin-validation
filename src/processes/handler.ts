@@ -73,17 +73,23 @@ export const handleProcesses = async (
         return ItemValidationStatuses.Success;
       }
 
-      const filePath = await downloadFile(
-        { filepath, itemId: item?.id, mimetype, fileStorage },
-        fTM,
-        member,
-        runner,
-      );
-      const status = await classifyImage(classifierApi, filePath).catch((error) => {
-        log.error(error);
+      try {
+        const filePath = await downloadFile(
+          { filepath, itemId: item?.id, mimetype, fileStorage },
+          fTM,
+          member,
+          runner,
+        );
+        const status = await classifyImage(classifierApi, filePath).catch((error) => {
+          log.error(error);
+          return ItemValidationStatuses.Failure;
+        });
+        return status;
+      } catch (e) {
+        // fix patch: an image could fail to be downloaded
+        log.error(e);
         return ItemValidationStatuses.Failure;
-      });
-      return status;
+      }
     default:
       throw new ProcessNotFoundError(process?.name);
   }
